@@ -1,0 +1,6 @@
+/node_modules/
+/scripts/
+/build/
+/contracts/GMBCToken.sol
+/source/zeppelin-solidity/
+.DS_Store
