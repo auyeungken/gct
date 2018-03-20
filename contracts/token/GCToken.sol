@@ -1,21 +1,54 @@
 pragma solidity ^0.4.21;
 
-import "../../node_modules/zeppelin-solidity/contracts/ownership/HasNoEther.sol";
-import "./TokenLocker.sol";
+import "./TokenSale.sol";
 
-contract GCToken is TokenLocker, HasNoEther {
+/**
+ * @title GlobeCas Token
+ * @author Ken Au yeung
+ * @dev Transfer lock will happen as following
+ * 1) Amount purchase through private sale and is over N GCT in total, than the account will lock away from transfer until (ICO end + 90days) 
+ * 2) Amount purchase through crowdsale contract, than the account will lock away from transfer until (ICO end)
+ */
 
-    string public name = "GlobeCas";
-	string public symbol = "GCT";
-    uint8 public  decimals = 8;
+ // 1531540177,"0x9af32a8087a1cc8afb5d2b0d7dab358cbd677564"
+contract GCToken is TokenSale {
 
-    function GCToken() public {
-        totalSupply_ = 20000000000 * 10 ** uint(decimals);
-        balances[owner] = totalSupply_;
-        emit Transfer(address(0), owner, totalSupply_);
+    string constant public name = "GlobeCas";
+	string constant public symbol = "GCT";
+    uint8 constant public decimals = 8;
+
+    // private sale account lockout minutes from end of ICO
+    uint constant public PRIVATE_TRANSFER_LOCK_MINUTE = 5;
+
+    // when exceed this amount of token if account conducted in private sale, additional transfer restriction applies
+    uint constant public PRIVATE_INVEST_LOCK_TOKEN =  20000000 * 10 ** uint(decimals);
+
+    // maximum of GCT token
+    uint constant public CAPPED_SUPPLY =  20000000000 * 10 ** uint(decimals);
+    
+
+    /**
+    * @dev GCToken Constructor
+    * @param _icoEnd End time of ICO
+    */
+    function GCToken(uint _icoEnd) public 
+        TokenSale(CAPPED_SUPPLY, _icoEnd, PRIVATE_INVEST_LOCK_TOKEN,PRIVATE_TRANSFER_LOCK_MINUTE) 
+    {}
+    
+    modifier allowTransfer () {
+        // this will lock crowdsale/private sale account from transfer before ICO ends
+        require (now > icoEnd); 
+
+        // this will lock private sale account with token over certain amount from transfer
+        require (now > privateSaleTransferRelease || privateSaleInvest[msg.sender] < privateInvestLockToken);
+        _;
+    }
+    
+    function transfer(address _to, uint256 _value) public allowTransfer returns (bool) {
+        return super.transfer(_to, _value); 
     }
 
-    function tokenLockup(uint _lockupAmount, uint _lockupMinute) public onlyOwner {
-        super.tokenLockup(_lockupAmount * 10 ** uint(decimals), _lockupMinute);
+    function transferFrom(address _from, address _to, uint256 _value) public allowTransfer returns (bool) {
+        return super.transferFrom(_from,_to,_value);
     }
 }

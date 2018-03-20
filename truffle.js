@@ -4,7 +4,7 @@ module.exports = {
   //  ganache-cli -p 7545 -i 7545 -l 4712388 -g 1
   networks: {
     dev: {
-      host: "localhost",
+      host: "127.0.0.1",
       port: 7545,
       network_id: "7545", // Match any network id
       //gas: 7721974,//  4712388, // Gas limit used for deploys. Default is 4712388.
