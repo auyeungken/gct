@@ -10,7 +10,7 @@ import "./TokenSale.sol";
  * 2) Amount purchase through crowdsale contract, than the account will lock away from transfer until (ICO end)
  */
 
- // 1531540177,"0x9af32a8087a1cc8afb5d2b0d7dab358cbd677564"
+ // 1561540177,"0x9af32a8087a1cc8afb5d2b0d7dab358cbd677564"
 contract GCToken is TokenSale {
 
     string constant public name = "GlobeCas";

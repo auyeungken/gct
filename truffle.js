@@ -5,12 +5,12 @@ module.exports = {
   networks: {
     dev: {
       host: "127.0.0.1",
-      port: 7545,
-      network_id: "7545", // Match any network id
-      //gas: 7721974,//  4712388, // Gas limit used for deploys. Default is 4712388.
+      port: 8545,
+      network_id: "5777", // Match any network id
+      gas: 8721975,//  4712388, // Gas limit used for deploys. Default is 4712388.
       gasPrice : 1, // equal 5 Gwei and default is 100 Gwei
       // from : 0x012, // From address used during migrations. Defaults to the first available account provided by your Ethereum client.
-       //from : "0xecfdd32ed19ea8b7ec7f166418f1e0bdca95680f",
+       from : "0xDec09d5fA0C8bA2680792a592E5133E374e13609",
     }
   }
 };

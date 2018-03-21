@@ -37,7 +37,7 @@ contract TokenSale is StandardToken, HasNoEther {
     * @param _icoEnd End time of ICO
     * @param _privateInvestLockToken Additional transfer restriction for private sale account holding over this amount of tokens
     */
-    function TokenSale (uint _cap, uint _icoEnd, uint _privateInvestLockToken, uint _privateSaleTransferRelease) {
+    function TokenSale (uint _cap, uint _icoEnd, uint _privateInvestLockToken, uint _privateSaleTransferRelease) public {
         require (now < _icoEnd);
 
         icoEnd = _icoEnd;
@@ -59,12 +59,23 @@ contract TokenSale is StandardToken, HasNoEther {
         _;
     }
     
+    function setCrowdsaleAccount(address _crowdsaleAccount) onlyOwner external {
+        require(_crowdsaleAccount != address(0));
+        crowdsaleAccount = _crowdsaleAccount;
+    }
+
+    function setPrivatesaleAccount(address _privateSaleAccount) onlyOwnerAndCrowdsale external {
+        require(_privateSaleAccount != address(0));
+        privateSaleAccount = _privateSaleAccount;
+    }
+    
     /**
     * @dev Token transfer from private sale account to target
     * @param _to transfer balance to target address
     * @param _amount amount will be transfered to target address
+    * @return A boolean that indicates if the operation was successful.
     */
-    function privateSaleTransfer(address _to, uint _amount) internal{
+    function privateSaleTransfer(address _to, uint _amount) external returns (bool){
         require(now < icoEnd);
         require(msg.sender == privateSaleAccount && _to != privateSaleAccount);
         require(balances[privateSaleAccount] >= _amount);    
@@ -74,16 +85,8 @@ contract TokenSale is StandardToken, HasNoEther {
         privateSaleInvest[_to] = privateSaleInvest[_to].add(_amount); 
 
         emit Transfer(privateSaleAccount, _to, _amount);
-    }
 
-    function setCrowdsaleAccount(address _crowdsaleAccount) onlyOwner external {
-        require(_crowdsaleAccount != address(0));
-        crowdsaleAccount = _crowdsaleAccount;
-    }
-
-    function setPrivatesaleAccount(address _privateSaleAccount) onlyOwner external {
-        require(_privateSaleAccount != address(0));
-        privateSaleAccount = _privateSaleAccount;
+        return true;
     }
 
     /**

@@ -9,24 +9,53 @@ Usage parameters
    >       "gasPrice": "0x174876e800",
    >       "data": "0x"
 */
-module.exports = function(deployer) {
-  deployer.deploy(GCToken,"1521539683","0xaF5642e8230662FeA4C25E69dC8f077ba13bfC6A", {
-   // gas:7721974, 
-    gasPrice:web3.toWei("1", "wei"),
-    from : "0xc23b59CEF0BE7bF61e0113a0BD8a92Fc587B60E5",
-  }).then(function (){
-   // console.log(GCToken);
-    console.log("Gas Usage:", GCToken.class_defaults);
-   // return instance.giveAwayDividend.estimateGas(1);
+/*module.exports = function(deployer) {
+  deployer.deploy(GCToken,"1541539683").then(function (){
+    return deployer.deploy(GCTCrowdsale,GCToken.address,"0x8dfA3afF0Da3a7c1703Ad7f14dAb371b8e6F132e");
+  }).then(function(instance){
+    console.log(instance);
   });
- 
-  /*deployer.deploy(GCTCrowdsale , {
-    // gas:7721974, 
-     gasPrice:web3.toWei("1", "wei"),
-     from : "0xc23b59CEF0BE7bF61e0113a0BD8a92Fc587B60E5",
-   }).then(function (){
-    // console.log(GCToken);
-     console.log("Gas Usage:", GCToken.class_defaults);
-    // return instance.giveAwayDividend.estimateGas(1);
-   });*/
+};
+GCTCrowdsale.deployed().then(function(instance){instance.privateSaleAccount()});
+*/
+
+var a, b;
+module.exports = function(deployer,network,config) {
+  
+  deployer.then(function() {
+    // Create a new version of A
+    return GCToken.new("1541539683");
+  }).then(function(instance) {
+    a = instance;
+    // Get the deployed instance of B
+    return GCTCrowdsale.new(a.address,"0x8dfA3afF0Da3a7c1703Ad7f14dAb371b8e6F132e");
+  }).then(function(instance) {
+    b = instance;
+    // Set the new instance of A's address on B via B's setA() function.    
+     a.setCrowdsaleAccount(b.address);
+  }).then(function (instance){
+    console.log("GCToken Address: ", a.address);
+    console.log("GCTCrowdsale Address: ", b.address);
+
+
+    /*b.initCrowdsale.estimateGas({from: "0xDec09d5fA0C8bA2680792a592E5133E374e13609"}).then(function(r){
+      console.log(r);
+    });*/
+
+    /*b.initCrowdsale({from: "0xDec09d5fA0C8bA2680792a592E5133E374e13609",gas:678690}).then(function(result){
+      
+      
+      a.privateSaleAccount.call().then(function(result){
+        console.log("Private Sale Result:", result);
+      });
+
+      b.getInfo.call().then(function(result){
+        console.log("Get Info : " , result);
+      });
+
+      a.totalSupply.call().then(function(result){
+        console.log("Total Supply Result:", result);
+      });
+    });*/
+  });
 };
