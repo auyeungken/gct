@@ -7,5 +7,7 @@
     "privateSaleAccount"  : "0x9Af32A8087a1cc8afB5D2B0D7Dab358Cbd677564",
     "teamAccount"         : "0x55c6885ec95D3753DBf069812C40142a13Ec2Ce7",
     "promotionAccount"    : "0x7b5cC7895a03B99AF0c4D1D2f023209157109df7",
+    "testAccount"         : "0x55c6885ec95D3753DBf069812C40142a13Ec2Ce7",
+    "testAccount1"        : "0x7624EAe92208E03578deBAa7cDff635860c7F47C",
     "cap"                 : 2000000000000000000
 }

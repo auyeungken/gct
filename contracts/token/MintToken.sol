@@ -15,17 +15,6 @@ contract MintToken is StandardToken, HasNoEther {
     
     // Store the ico finish time 
     uint public icoEndTime;
-
-    // address of the private sale account
-    address public privateSaleAccount;
-
-    mapping(address => uint) internal privateSaleInvest;
-
-    // the amount of token that trigger's transfer lockout when traded in private sale
-    uint public privateInvestLockToken;
-    
-     // The lockout time for account transfer that has traded in private sale with total amount of tokesn over PRIVATE_INVEST_LOCK
-    uint public privateSaleTransferRelease;
     
     address public crowdsaleAccount;
 
@@ -54,23 +43,16 @@ contract MintToken is StandardToken, HasNoEther {
     /**
     * @param _cap Maximum supply of GCT tokens
     * @param _icoEndTime End time of ICO
-    * @param _privateInvestLockToken Additional transfer restriction for private sale account holding over this amount of tokens
-    * @param _privateSaleTransferRelease Allow account conducted in private sale over _privateInvestLockToken to make transfer after this timestamp
     */
-    function init(uint _cap, uint _icoEndTime, address _privateSaleAccount, uint _privateInvestLockToken, uint _privateSaleTransferRelease) external onlyCrowdsale {
+    function init(uint _cap, uint _icoEndTime) public onlyCrowdsale {
         require(!hasInit);
         require(now < _icoEndTime);
         require(_cap > 0);
-        require(_privateSaleAccount != address(0));
 
         hasInit = true;
         icoEndTime = _icoEndTime;
         cap = _cap;
-        privateSaleAccount = _privateSaleAccount;
-        privateInvestLockToken = _privateInvestLockToken;
-        privateSaleTransferRelease = _privateSaleTransferRelease; 
     }
-
 
     /**
     * @dev Function to mint tokens referenced from https://github.com/OpenZeppelin/zeppelin-solidity/blob/master/contracts/token/ERC20/CappedToken.sol
