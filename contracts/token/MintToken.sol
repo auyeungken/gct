@@ -69,7 +69,7 @@ contract MintToken is StandardToken, HasNoEther {
         return true;
     }
 
-    function setIcoEndTime(uint _icoEndTime) external onlyOwner {
+    function setIcoEndTime(uint _icoEndTime) external onlyCrowdsale {
         require(_icoEndTime >= now);
         icoEndTime = _icoEndTime;
     }

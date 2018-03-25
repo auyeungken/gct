@@ -16,7 +16,7 @@ module.exports = function(deployer, network, accounts) {
     deployer.deploy(GCTCrowdsale, GCToken.address, config.walletAddress, icoEndTime, {from:config.ownerAccount}).then(function(){
         return GCToken.deployed().then(function(gctInstance){
 
-            gctInstance.setCrowdsaleAccount(GCTCrowdsale.address).then(function(r){                
+            gctInstance.setCrowdsaleAccount(GCTCrowdsale.address, {from:config.ownerAccount}).then(function(r){                
                     return GCTCrowdsale.deployed();
                 }).then(function(crowdsaleInstance){
                     /*GCTCrowdsale = crowdsaleInstance;
