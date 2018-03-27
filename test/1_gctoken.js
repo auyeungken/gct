@@ -27,6 +27,19 @@ contract('GCToken Test', function(accounts) {
         }); 
     }); 
 
+    /*
+    it("Should not able to change crowdsale address",async function(){
+         await gct.crowdsaleAccount({from:publicAccount}).then(function(r){
+            console.log("Current address:", r);
+         });
+       
+        await gct.setCrowdsaleAccount(config.ownerAccount, {from:config.ownerAccount}).then(function (){
+            assert.isTrue(false);
+        }).catch(function(e){
+            assert.isTrue(isVMErr(e.message), e.message);
+        }); 
+    });
+    */
 
     it("Should contain private address",async function(){
         await gct.privateSaleAccount({from:publicAccount}).then(function (r){

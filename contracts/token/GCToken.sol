@@ -14,5 +14,4 @@ contract GCToken is PrivateSale {
     string constant public name = "GlobeCas";
     string constant public symbol = "GCT";
     uint8 constant public decimals = 8;
-
 }

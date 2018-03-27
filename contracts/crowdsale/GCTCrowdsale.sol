@@ -1,6 +1,5 @@
 pragma solidity ^0.4.21;
 
-
 import "../../node_modules/zeppelin-solidity/contracts/math/SafeMath.sol";
 import "../../node_modules/zeppelin-solidity/contracts/lifecycle/Pausable.sol";
 import "../token/GCToken.sol";
@@ -53,6 +52,7 @@ import "./AccountAddress.sol";
 contract GCTCrowdsale is AccountAddress, Pausable, Whitelist {
     using SafeMath for uint256;
 
+
     /**
     * Event for token purchase logging
     * @param purchaser who paid for the tokens
@@ -65,13 +65,13 @@ contract GCTCrowdsale is AccountAddress, Pausable, Whitelist {
 
     uint8 constant public decimals = 8;
     
-    // --------------- ALL THE TOKENS BELOW ALREADY ADD 8 decimal places to it ------------------------------------------------  
-    uint constant public CAPPED_SUPPLY       = 2000000000000000000; // maximum of GCT token
-    uint constant public TEAM_RESERVE        = 200000000000000000;  // total tokens team can claim
-    uint constant public COMPANY_RESERVE     = 800000000000000000;  // total tokens company reserve for - lock for 6 months
-    uint constant public PRIVATE_SALE        = 90000000000000000;   // total tokens used for private sale - lock for 3 months when over invest Token
-    uint constant public PROMOTION_PROGRAM   = 100000000000000000;  // total tokens used for promotion program
-    uint constant public CROWDSALE_SUPPLY    = 810000000000000000;  // total tokens for crowdsale
+    // -------------------------------------------------- TOKENS  -------------------------------------------------------------  
+    uint constant public CAPPED_SUPPLY       = 20000000000e8; // maximum of GCT token
+    uint constant public TEAM_RESERVE        = 2000000000e8;  // total tokens team can claim
+    uint constant public COMPANY_RESERVE     = 8000000000e8;  // total tokens company reserve for - lock for 6 months
+    uint constant public PRIVATE_SALE        = 900000000e8;   // total tokens used for private sale - lock for 3 months when over invest Token
+    uint constant public PROMOTION_PROGRAM   = 1000000000e8;  // total tokens used for promotion program
+    uint constant public CROWDSALE_SUPPLY    = 8100000000e8;  // total tokens for crowdsale
     // ------------------------------------------------------------------------------------------------------------------------
     
     uint constant public SOFTCAP             = 5000 ether;   
@@ -79,10 +79,10 @@ contract GCTCrowdsale is AccountAddress, Pausable, Whitelist {
     uint constant public MIN_WEI_TO_PURCHASE = 0.001 ether; 
     
     // private sale account lockout from end of ICO
-    uint constant public PRIVATE_TRANSFER_LOCKout = 90 days;
+    uint constant public PRIVATE_TRANSFER_LOCKOUT = 90 days;
 
     // when exceed this amount of token if account conducted in private sale, additional transfer restriction applies
-    uint constant public PRIVATE_INVEST_LOCK_TOKEN =  2000000000000000;
+    uint constant public PRIVATE_INVEST_LOCK_TOKEN =  20000000e8;
 
     // company reseved release minutes
     uint constant public COMPANY_RESERVE_FOR = 182 days; // this equivalent to 6 months
@@ -95,10 +95,7 @@ contract GCTCrowdsale is AccountAddress, Pausable, Whitelist {
 
     // The token being sold
     GCToken public token;
-
-    // Address where funds are collected
-    address public wallet;
-
+    
     // Amount of wei raised
     uint public weiRaised;
 
@@ -127,13 +124,13 @@ contract GCTCrowdsale is AccountAddress, Pausable, Whitelist {
     uint constant public CLAIM_STAGE = 30 days;
 
     // the amount of token each stage team can claim
-    uint[] public teamReserve = [865800000000000, 1731600000000000, 2597400000000000, 3463200000000000, 4329000000000000, 5194800000000000, 6060600000000000, 6926400000000000, 7792200000000000, 8658000000000000, 9523800000000000, 10389600000000000, 11255400000000000, 12121200000000000, 12987000000000000, 13852800000000000, 14718600000000000, 15584400000000000, 16450200000000000, 17316000000000000, 18182000000000000];
+    uint[] public teamReserve = [8658000e8, 17316000e8, 25974000e8, 34632000e8, 43290000e8, 51948000e8, 60606000e8, 69264000e8, 77922000e8, 86580000e8, 95238000e8, 103896000e8, 112554000e8, 121212000e8, 129870000e8, 138528000e8, 147186000e8, 155844000e8, 164502000e8, 173160000e8, 181820000e8];
     
     // current crowdsale stage
     uint8 public currentStage = 0;
 
     // token can be purchase each for each crowdsale stage
-    uint[] public stageTokenSupply = [90000000000000000, 93460000000000000, 129600000000000000, 168750000000000000, 184092727300000000];
+    uint[] public stageTokenSupply = [900000000e8, 934600000e8, 1296000000e8, 1687500000e8, 1840927273e8];
     //uint[] public stageBonusSupply = [31500000000000000, 28038000000000000,  32400000000000000,  33750000000000000,  18409272700000000];
     
     // amount of token minted for each stage
@@ -144,15 +141,12 @@ contract GCTCrowdsale is AccountAddress, Pausable, Whitelist {
     
 
     /**
-    * @param _wallet Address where collected funds will be forwarded to
     * @param _token Address of the token being sold
     * @param _icoEndTime ICO finish time
     */
-    function GCTCrowdsale(address _token, address _wallet, uint _icoEndTime) public {
-        require(_wallet != address(0));
+    function GCTCrowdsale(address _token, uint _icoEndTime) public {
         require(_token != address(0));
 
-        wallet = _wallet;
         token = GCToken(_token);
         icoEndTime = _icoEndTime;
     }
@@ -161,31 +155,34 @@ contract GCTCrowdsale is AccountAddress, Pausable, Whitelist {
     function init() public onlyOwner {
         require (!hasInit && !token.hasInit());
         
-        token.init(CAPPED_SUPPLY, icoEndTime, PRIVATE_SALE_ACCOUNT, PRIVATE_INVEST_LOCK_TOKEN, icoEndTime + PRIVATE_TRANSFER_LOCKout);
+        token.init(CAPPED_SUPPLY, icoEndTime, PRIVATE_SALE_ACCOUNT, PRIVATE_INVEST_LOCK_TOKEN, icoEndTime.add(PRIVATE_TRANSFER_LOCKOUT));
 
         token.mint(PRIVATE_SALE_ACCOUNT, PRIVATE_SALE);
         token.mint(PROMOTION_ACCOUNT, PROMOTION_PROGRAM);
         hasInit = true;
     }
 
-    function claimCompanyReserve () public onlyOwner {
+    function claimCompanyReserve () external {
+        require(msg.sender == COMPANY_ACCOUNT);
         require(!companyClaimed);
-        require(now >= icoEndTime + COMPANY_RESERVE_FOR);
+        require(now >= icoEndTime.add(COMPANY_RESERVE_FOR));
         
         token.mint(COMPANY_ACCOUNT, COMPANY_RESERVE);
         companyClaimed = true;
     }
 
-    function claimTeamToken() public onlyOwner {
+    function claimTeamToken() external {
+        require(msg.sender == TEAM_ACCOUNT);
+        require(now >= icoEndTime.add(TEAM_CAN_CLAIM_AFTER));
         require(teamReserve[20] > 0);
-        uint totalClaimable;        
-        uint claimableTime = TEAM_CAN_CLAIM_AFTER;
 
-        for(uint8 i = 0; i < 21; i++){
+        uint claimableTime = icoEndTime.add(TEAM_CAN_CLAIM_AFTER);
+        uint totalClaimable;
+
+        for(uint i = 0; i < 21; i++){
             if(teamReserve[i] > 0){
                 // each month can claim the next stage starts from TEAM_CAN_CLAIM_AFTER
-                claimableTime = claimableTime.add(i * CLAIM_STAGE);
-                if(claimableTime < now){
+                if(claimableTime.add(i.mul(CLAIM_STAGE)) < now){
                     totalClaimable = totalClaimable.add(teamReserve[i]);
                     teamReserve[i] = 0;
                 }else{
@@ -237,12 +234,11 @@ contract GCTCrowdsale is AccountAddress, Pausable, Whitelist {
     /**
     * @param _beneficiary Address performing the token purchase
     */
-    function buyTokens(address _beneficiary) public whenNotPaused payable {
+    function buyTokens(address _beneficiary) public isWhitelisted(_beneficiary) whenNotPaused payable {
         require(!crowdsaleClosed);
         require(_beneficiary != address(0));
         require(msg.value >= MIN_WEI_TO_PURCHASE);
-        //require (crowdsaleMinted < CROWDSALE_SUPPLY);
-        //require (now < icoEndTime);
+        require(crowdsaleMinted < CROWDSALE_SUPPLY);
 
         uint weiAmount = msg.value;
         uint tokenSold;
@@ -326,7 +322,7 @@ contract GCTCrowdsale is AccountAddress, Pausable, Whitelist {
     */
     function _forwardFunds() internal {
         if (weiRaised >= SOFTCAP){
-            wallet.transfer(address(this).balance);
+            WALLET.transfer(address(this).balance);
         }
     }
 }
