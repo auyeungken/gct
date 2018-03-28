@@ -1,0 +1,88 @@
+<html>
+    <head>
+        <script>
+           
+            function createEthAccount(){
+                let acct = web3.eth.accounts.create(generateRandomStr(32));
+                
+                $("#address").html(acct.address);
+                $("#privatekey").html(acct.privateKey);
+
+                let pass = $("#password").val().trim();
+                $("#password").val("");
+                if(pass !== ''){
+                    let enc = GibberishAES.enc(acct.privateKey, pass);
+                    //console.log(GibberishAES.a2h(GibberishAES.s2a(enc)));
+
+                    let arr = GibberishAES.s2a(enc);
+                    let fixEnc = "";
+                    for(let i=0; i < arr.length; i++){
+                        if(arr[i]!=10){ // remove the new line character
+                            fixEnc += String.fromCharCode(arr[i]);
+                        }
+                    }
+                    $("#encprivatekey").html(fixEnc);
+                    $("#testcmd").html("echo '"+fixEnc+"' | openssl enc -d -aes-256-cbc -a -k [Encrypt Password] -md md5");
+                }
+        
+                let signdata = web3.eth.accounts.sign('GCT Token', acct.privateKey);
+                $("#signaddress").html(acct.address);
+                $("#sign").html(signdata.signature);
+                $("#signmessage").html(signdata.message);
+            }
+        </script>
+    </head>
+    <body>
+        
+        <table>
+            <tr>
+                <td colspan="2"><h1>Create Ethereum Account</h1></td>
+            </tr>
+            <tr>
+                <td>Password:</td>
+                <td><input type="password" id="password" value="" /></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td><input type="button" value="Create" onclick="createEthAccount()"/></td>
+            </tr>
+            <tr>
+                <td colspan="2"><hr/></td>
+            </tr>
+            <tr>
+                <td>Address:</td>
+                <td><div id='address'></div></td>
+            </tr>
+            <tr>
+                <td>Private Key:</td>
+                <td><div id='privatekey'></div></td>
+            </tr>
+            <tr>
+                <td>Encrypted Private Key(aes-256-cbc):</td>
+                <td><div id='encprivatekey'></div></td>
+            </tr>
+            <tr>
+                <td>Test Command</td>
+                <td><div id='testcmd'></div></td>
+            </tr>
+            <tr>
+                <td colspan="2"><hr/></td>
+            </tr>
+            <tr>
+                <td colspan="2"><h1>Sign Information</h1></td>
+            </tr>
+            <tr>
+                <td>Address</td>
+                <td><div id='signaddress'></div></td>
+            </tr>           
+            <tr>
+                <td>Signature</td>
+                <td><div id='sign'></div></td>
+            </tr>
+            <tr>
+                <td>original Message that was signed</td>
+                <td><div id='signmessage'></div></td>
+            </tr>
+        </table>
+    </body>
+</html>

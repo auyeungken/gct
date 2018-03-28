@@ -1,0 +1,52 @@
+<html>
+    <head>
+        <!-- aes from https://github.com/mdp/gibberish-aes echo "U2FsdGVkX1+21O5RB08bavFTq7Yq/gChmXrO3f00tvJaT55A5pPvqw0zFVnHSW1o" | openssl enc -d -aes-256-cbc -a -k password -md md5 -->
+        <script type="text/javascript" src="js/aes.js"></script>
+        <script type="text/javascript" src="js/web3.min.js"></script>
+        <script type="text/javascript" src="js/jquery.min.js"></script>
+        <script type="text/javascript" src="js/KISS07.js"></script>
+        <script type="text/javascript" src="js/Mash.js"></script>
+        <script type="text/javascript" src="js/bignumber.min.js"></script>
+        <script>
+            GibberishAES.size(256);
+            var random = KISS07();
+            var web3 = new Web3("ws://localhost:8545");
+
+            function rand(min,max){
+                var n = max - min + 1;
+                return Math.floor(random() * n) + min;
+            }
+            function generateRandomStr(numChar){
+                var s = "";
+                for(var i=0; i < numChar; i++){
+                    s+=String.fromCharCode(rand(33,126));
+                }
+                return s;
+            }
+
+            function loadPage(p){
+                $('#__content__').load(p);
+            }
+        </script>
+        <style>
+            input[type=text] {
+                width:500px;
+            }
+        </style>
+    </head>
+    <body>
+        <table style="width:100%">
+            <tr>
+                <td>
+                    <input type="button" onclick="loadPage('createacct.html')" value="Create Account">
+                    <input type="button" onclick="loadPage('transfer.html')" value="Transaction">
+                </td>
+            </tr>
+            <tr>
+                <td style="width:100%">
+                    <div id="__content__" style="width:100%"></div>
+                </td>
+            </tr>
+        </table>
+    </body>
+</html>

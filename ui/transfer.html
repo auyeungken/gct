@@ -1,0 +1,126 @@
+<html>
+    <head>
+        <script>           
+            async function transfer(){
+                let amt = $('#amount').val();
+                let toAddr = $('#toaddress').val();
+                let gprice = $("#gasprice").val();
+                let gas = $("#gas").val();
+
+                if(!$.isNumeric(gprice)){
+                    alert("Unknown gas price " + gprice);
+                    return;
+                }
+
+                if(!$.isNumeric(gas)){
+                    alert("Unknown gas " + gas);
+                    return;
+                }
+
+                if(confirm("Do you wish to send "+amt+" ETH \n\t=> address "+toAddr+"?")){
+                    let pkey = $("#privatekey").val();
+                    if(pkey.trim() === ""){
+                        pkey = GibberishAES.dec($("#encprivatekey").val(), $("#password").val());
+                    }
+                    let walletObj = web3.eth.accounts.wallet.add(pkey);
+                    let wei = convertToWei(amt);
+                    let acctBal = new BigNumber(await web3.eth.getBalance(walletObj.address));
+                    
+                    if(acctBal.lte(wei)){
+                        alert("Insufficient Fund, only have " + acctBal.div("1e+18") + " ETH");
+                        return;
+                    }
+
+                    //console.log(walletObj);
+                    transactionObject = {
+                        from:walletObj.address,
+                        to: toAddr,
+                        value: wei,
+                        gasPrice: convertToWei(gprice,"9"),
+                        gas: gas,
+                    };
+
+                    $("#status").html("Pending Process");
+                    await web3.eth.sendTransaction( transactionObject).then(function (r){
+                        let str = "transactionHash: " + r.transactionHash + "<br/>";
+                        str+= "blockNumber: "+r.blockNumber + "<br/>";
+                        str+= "gasUsed: " + r.gasUsed + "<br/><br/>";
+                        
+                        //$("#status").html(JSON.stringify(r));
+                        $("#status").html(str);
+                    }).catch(function(e){
+                        $("#status").html("Error:"+e);
+                    });
+                    web3.eth.accounts.wallet.remove(walletObj.address);
+                    
+                }
+            }
+
+            function convertToWei(amt, unit){
+                if(!unit) unit = "18";
+                if($.isNumeric(amt)){
+                    return new BigNumber(amt).times('1e+'+unit);
+                }
+                return NaN;
+            }
+        </script>
+    </head>
+    <body>
+        
+        <table>
+            <tr>
+                <td colspan="2"><h1>Transfer</h1></td>
+            </tr>
+            <tr>
+                <td>Status</td>
+                <td><div id="status"></div></td>
+            </tr>
+            <tr>
+                <td>To Address</td>
+                <td><input type="text" id="toaddress" value="0x8dfA3afF0Da3a7c1703Ad7f14dAb371b8e6F132e"/></td>
+            </tr>
+            <tr>
+                <td>Transfer Amount in Eth</td>
+                <td>
+                    <input type="text" id="amount" value="1" onkeyup="$('#weiAmt').html(convertToWei($(this).val()).toString())"/> (Wei : <span id="weiAmt"></span>)
+                </td>
+            </tr>
+            <tr>
+                <td>Gas Price in Gwei</td>
+                <td>
+                    <input type="text" id="gasprice" value="1" onkeyup="$('#gasWeiAmt').html(convertToWei($(this).val(),'9').toString())"/> (Wei : <span id="gasWeiAmt"></span>)
+                </td>
+            </tr>
+            <tr>
+                <td>Gas For transaction</td>
+                <td>
+                    <input type="text" id="gas" value="21000" />
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2"><hr/></td>
+            </tr>
+            <tr>
+                <td>Private Key</td>
+                <td><input type="text" id="privatekey" value="0x74d2a65db353f2387db3c9ade91ce2b10b67a8e5dee6b99bdd64420d08c49b68"/></td>
+            </tr>
+            <tr>
+                <td colspan="2"><hr/></td>
+            </tr>
+            <tr>
+                <td>Password:</td>
+                <td><input type="password" id="password" value="" /></td>
+            </tr>
+            <tr>
+                <td>Encrypted Private Key:</td>
+                <td><input type="text" id="encprivatekey" value="" /></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td><input type="button" value="Transfer" onclick="transfer()"/></td>
+            </tr>
+            
+        </table>
+  
+    </body>
+</html>
