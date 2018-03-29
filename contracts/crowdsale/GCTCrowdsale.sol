@@ -142,24 +142,24 @@ contract GCTCrowdsale is AccountAddress, Pausable, Whitelist {
 
     /**
     * @param _token Address of the token being sold
-    * @param _icoEndTime ICO finish time
     */
-    function GCTCrowdsale(address _token, uint _icoEndTime) public {
+    function GCTCrowdsale(address _token) public {
         require(_token != address(0));
-
-        token = GCToken(_token);
-        icoEndTime = _icoEndTime;
+        token = GCToken(_token);        
+        paused = true;
     }
 
   
-    function init() public onlyOwner {
+    function init(uint _icoEndTime) public onlyOwner {
         require (!hasInit && !token.hasInit());
         
+        icoEndTime = _icoEndTime;
         token.init(CAPPED_SUPPLY, icoEndTime, PRIVATE_SALE_ACCOUNT, PRIVATE_INVEST_LOCK_TOKEN, icoEndTime.add(PRIVATE_TRANSFER_LOCKOUT));
 
         token.mint(PRIVATE_SALE_ACCOUNT, PRIVATE_SALE);
         token.mint(PROMOTION_ACCOUNT, PROMOTION_PROGRAM);
         hasInit = true;
+        paused = false;
     }
 
     function claimCompanyReserve () external {

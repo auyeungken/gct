@@ -1,0 +1,88 @@
+<html>
+    <head>
+        <script src="contract/GCToken.js"></script>
+        <script src="contract/GCTCrowdsale.js"></script>
+    </head>
+    <body>
+        <table>
+            <tr>
+                <td colspan="2"><h1>GCT Contract</h1></td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <div id="keysection"></div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2"><hr/></td>
+            </tr>
+            <tr>
+                <td>                    
+                    Contract Address : <input type="text" id='txtgctaddress' value="0xE2EB199C90810367E96CB8c666C2fB30Bd04133C"/>
+                    <input type="button" value="Load Contract" onclick="loadContract(GCToken)"/>
+                </td>                
+            </tr>
+            <tr>
+                <td>
+                    Gas Price in Gwei <input type="text" id="gasprice" value="1" onkeyup="$('#gasWeiAmt').html(convertToWei($(this).val(),'9').toString())"/> (Wei : <span id="gasWeiAmt"></span>)
+                </td>
+            </tr>
+        </table>
+        <script>
+            $('#keysection').load('component/key.html');
+            
+            function loadContract(contractObj){
+                /*getContractVal(getPrivateKey(),GCToken,"getPrivateSaleInvested", "").then(function(r){
+                    console.log(r);
+                });*/
+
+                //setContractVal(getPrivateKey(),GCToken,"400000","1","setCrowdsaleAccount",null,"0x06d6913718A18e4f71Cd827e6Fa1105868D1B4c2");
+                
+                getContractVal(getPrivateKey(),GCToken,"crowdsaleAccount").then(function(r){
+                    console.log(r);
+                });
+            } 
+            function setContractVal(pkey,contractObj,gas,gasprice,functionName,display,...params){
+                let account = web3.eth.accounts.wallet.add(getPrivateKey());
+                let contract = new web3.eth.Contract(contractObj.abi, $('#txtgctaddress').val());
+                contract.options.from = account.address;
+                let f = eval("contract.methods."+functionName+"("+(params.length>0?"params":"")+")");                
+                if(params.length>0) f.arguments = params;;
+
+                f.estimateGas({
+                    from: account.address,
+                    gas: gas,
+                }).then(function(gasAmount){
+                    f.send({
+                        from: account.address,
+                        gasPrice: gasprice,
+                        gas: gas,
+                    }).then(function(r){
+                        if(display)display.append("Success Processing("+functionName+"):" + r);
+                        console.log("Success Process("+functionName+")", r);
+                    }).catch(function(error){
+                        if(display)display.append("Error Processing("+functionName+"):" + e);
+                    });
+                    web3.eth.accounts.wallet.remove(account.address);
+                })
+                .catch(function(error){
+                    if(display)display.append("Error Estimate Processing("+functionName+"):" + e);                    
+                    web3.eth.accounts.wallet.remove(account.address);
+                });
+            }
+
+            function getContractVal(pkey, contractObj, functionName,...params){
+                let account = web3.eth.accounts.wallet.add(getPrivateKey());
+                let contract = new web3.eth.Contract(contractObj.abi, $('#txtgctaddress').val());
+                contract.options.from = account.address;
+                let f = eval("contract.methods."+functionName+"("+(params.length>0?"params":"")+")");                
+                if(params.length>0) f.arguments = params;;
+
+                let result = f.call();
+                web3.eth.accounts.wallet.remove(account.address);
+                return result;
+            }
+
+        </script>
+    </body>
+</html>

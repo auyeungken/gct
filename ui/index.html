@@ -27,6 +27,30 @@
             function loadPage(p){
                 $('#__content__').load(p);
             }
+
+            function contractAt(addr, abi){
+                return web3.eth.contract(abi).at(addr);
+            }
+
+            async function getBalance(addr, raw){
+                if(addr.trim()==='')return NaN;
+                let v = new BigNumber(await web3.eth.getBalance(addr));
+                if(!raw) v = v.div("1e+18");
+                return v;
+            }
+
+            async function displayBal(addr, obj){
+                let bal = await getBalance(addr);
+                $(obj).html(bal.toString() + "ETH");
+            }
+
+            function convertToWei(amt, unit){
+                if(!unit) unit = "18";
+                if($.isNumeric(amt)){
+                    return new BigNumber(amt).times('1e+'+unit);
+                }
+                return NaN;
+            }
         </script>
         <style>
             input[type=text] {
@@ -40,6 +64,9 @@
                 <td>
                     <input type="button" onclick="loadPage('createacct.html')" value="Create Account">
                     <input type="button" onclick="loadPage('transfer.html')" value="Transaction">
+                    <input type="button" onclick="loadPage('gct.html')" value="GCT">
+                    <input type="button" onclick="loadPage('crowdsale.html')" value="Crowdsale">
+                    <input type="button" onclick="loadPage('deploy.html')" value="Deploy">
                 </td>
             </tr>
             <tr>

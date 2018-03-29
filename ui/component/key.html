@@ -1,0 +1,59 @@
+<script>
+    function getPrivateKey(){
+        let obj = $("#privateKeySec");
+        let pkey = obj.find("#privatekey").val();
+        if(pkey.trim() === ""){
+            pkey = GibberishAES.dec(obj.find("#encprivatekey").val(), obj.find("#password").val());
+        }
+        return pkey;
+    }
+    async function loadAcctInfo(){
+        let acct = web3.eth.accounts.privateKeyToAccount(getPrivateKey());
+        let bal = await getBalance(acct.address);
+        let obj = $("#privateKeySec");
+        obj.find('#sendaddress').html(acct.address);
+        obj.find('#balance').html(bal + "ETH");
+    }
+</script>
+<div id="privateKeySec">
+    <fieldset>
+        <legend>Send from Account</legend>
+        <table>
+            <tr>
+                <td colspan="2"><h2>Account Info</h2></td>
+            </tr>
+            <tr>
+                <td>Address</td>
+                <td><span id="sendaddress"></span></td>
+            </tr>
+            <tr>
+                <td>Balance</td>
+                <td><span id="balance"></span></td>
+            </tr>
+            <tr>
+                <td colspan="2"><hr/></td>
+            </tr>
+            <tr>
+                <td>Private Key</td>
+                <td><input type="text" id="privatekey" value="0x74d2a65db353f2387db3c9ade91ce2b10b67a8e5dee6b99bdd64420d08c49b68"/></td>
+            </tr>
+            <tr>
+                <td colspan="2"><hr/></td>
+            </tr>
+            <tr>
+                <td>Encrypted Private Key:</td>
+                <td><input type="text" id="encprivatekey" value="" /></td>
+            </tr>
+            <tr>
+                <td>Password:</td>
+                <td><input type="password" id="password" value="" /></td>
+            </tr>
+            <tr>
+                <td colspan="2"><hr/></td>
+            </tr>
+            <tr>
+                <td colspan="2"><input type="button" value="Load Account" onclick="loadAcctInfo()"/></td>
+            </tr>
+        </table>
+    </fieldset>
+</div>

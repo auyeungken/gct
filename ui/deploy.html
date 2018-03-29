@@ -1,0 +1,98 @@
+<html>
+    <head>
+        <script src="contract/GCToken.js"></script>
+        <script src="contract/GCTCrowdsale.js"></script>
+    </head>
+    <body>
+        <table>
+            <tr>
+                <td colspan="2"><h1>Deploy Contract - <span style='color:red'>Remember to copy contract address</span></h1></td>
+            </tr> 
+            <tr>
+                <td colspan="2">
+                    <div id="keysection"></div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Deploy Sequence
+                    <ol>
+                        <li>Deploy GCT Contract</li>
+                        <li>Deploy Crowdsale contract with GCT contract address</li>
+                        <li>Initialize Crowdsale contract</li>
+                    </ol>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    Gas Price in Gwei <input type="text" id="gasprice" value="1" onkeyup="$('#gasWeiAmt').html(convertToWei($(this).val(),'9').toString())"/> (Wei : <span id="gasWeiAmt"></span>)
+                </td>
+            </tr>
+            <tr>
+                <td><input type="button" value="Deploy GCT" onclick="deploygct()"/></td>
+                <td><span id='gctaddress'></span></td>
+            </tr>
+            <tr>
+                <td>
+                    <input type="button" value="Deploy Crowdsale" onclick="deploycrowd()"/>
+                    GCT Address : <input type="text" id='txtgctaddress' value=""/>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2"><hr/></td>
+            </tr>
+            <tr>
+                <td><div id='deployout'></div></td>
+            </tr>
+        </table>
+        <script>
+             $('#keysection').load('component/key.html');
+
+            function deploygct(){
+                deployContract(getPrivateKey(),GCToken,$("#gasprice").val(),[], $('#deployout')); 
+            }
+            function deploycrowd(){
+                let gct = $('#txtgctaddress').val().trim();
+                if(gct===''){
+                    alert('Missing gct address');
+                    return;
+                }
+                deployContract(getPrivateKey(),GCTCrowdsale,$("#gasprice").val(),[gct], $('#deployout'));
+            }
+            
+            function deployContract(pkey,contractObj,gasprice,args,display){
+                let gas = contractObj.estimateGas;
+                let abi = contractObj.abi;
+                let data = contractObj.data;
+
+                display.append("<h1>Deploy Status - "+contractObj.name+"</h1>");
+                let account = web3.eth.accounts.wallet.add(getPrivateKey());
+                var myContract = new web3.eth.Contract(abi,{
+                    from: account.address,
+                    gasPrice: gasprice,
+                    gas: gas,
+                    data: data,
+                });
+
+                let obj = myContract.deploy({
+                    arguments: args,
+                }).send(function(error, transactionHash){ 
+                    display.append("<br/>Send: Err=>" + error + "<br/>Transaction Hash : " + transactionHash) ;
+                /*}).on('error', function(error){               
+                    display.append("<br/>Error:" + error) ;      
+                }).on('transactionHash', function(transactionHash){     
+                    display.append("<br/>transaction Hash : ",  transactionHash) ; */
+                }).on('receipt', function(receipt){
+                    display.append("<br/>receipt:", receipt.contractAddress) // contains the new contract address
+                }).on('confirmation', function(confirmationNumber, receipt){ 
+                    display.append("<br/>confirmation:", confirmationNumber + "<br/>Receipt:" + receipt );
+                }).then(function(newContractInstance){
+                    display.append("<br/><h3 style='color:red'>Contract Address: "+newContractInstance.options.address + "</h3>") // instance with the new contract address
+                });
+                
+                web3.eth.accounts.wallet.remove(account.address);
+                return obj;
+            }
+        </script>
+    </body>
+</html>
