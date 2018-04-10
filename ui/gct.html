@@ -1,8 +1,4 @@
 <html>
-    <head>
-        <script src="contract/GCToken.js"></script>
-        <script src="contract/GCTCrowdsale.js"></script>
-    </head>
     <body>
         <table>
             <tr>
@@ -19,7 +15,7 @@
             <tr>
                 <td>                    
                     Contract Address : <input type="text" id='txtgctaddress' value="0xE2EB199C90810367E96CB8c666C2fB30Bd04133C"/>
-                    <input type="button" value="Load Contract" onclick="loadContract(GCToken)"/>
+                    <input type="button" value="Load Contract" onclick="loadContract()"/>
                 </td>                
             </tr>
             <tr>
@@ -27,62 +23,105 @@
                     Gas Price in Gwei <input type="text" id="gasprice" value="1" onkeyup="$('#gasWeiAmt').html(convertToWei($(this).val(),'9').toString())"/> (Wei : <span id="gasWeiAmt"></span>)
                 </td>
             </tr>
+            <tr>
+                <td colspan="2"><hr/></td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <fieldset>
+                        <legend><h3>GCT Operation</h3></legend>
+                        <table>
+                            <tr>
+                                <td>Set Crowdsale Account<br/>(Only Contract Owner)</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>Private Sale Transfer<br/>(Only Private Sale Account)</td>
+                                <td></td>
+                            </tr>
+                        </table>
+                    </fieldset>
+                    <fieldset>
+                        <legend><h3>Get GCT Info - <input type="button" value="Load Contract" onclick="loadContract()"/></h3></legend>
+                        <table>
+                            <tr>
+                                <td>Contract Owner</td>
+                                <td><span id='txtowner'></span></td>
+                            </tr>
+                            <tr>
+                                <td>Name</td>
+                                <td><span id='txtname'></span></td>
+                            </tr>
+                            <tr>
+                                <td>symbol</td>
+                                <td><span id='txtsymbol'></span></td>
+                            </tr>
+                            <tr>
+                                <td>decimals</td>
+                                <td><span id='txtdecimals'></span></td>
+                            </tr>
+                            <tr>
+                                <td>Cap</td>
+                                <td><span id='txtcap'></span></td>
+                            </tr>
+                            <tr>
+                                <td>Total Token Supply</td>
+                                <td><span id='txttotalSupply'></span></td>
+                            </tr>
+                            <tr>
+                                <td>ICO Endtime</td>
+                                <td><span id='txticoEndTime'></span></td>
+                            </tr>
+                            <tr>
+                                <td>Token Balance<br/>&nbsp;</td>
+                                <td><input type='text' id='tokenbalance'><input type='button' value='Get' onclick="contractUtils.getVal(getPrivateKey(), GCToken,'balanceOf',$('#txtbalanceOf'),$('#tokenbalance').val(),undefined,'1e+8')"/><br/>GCT <span id='txtbalanceOf'></span></td>
+                            </tr>
+                            <tr>
+                                <td>crowdsaleAccount</td>
+                                <td><span id='txtcrowdsaleAccount'></span></td>
+                            </tr>                            
+                            <tr>
+                                <td>hasInit</td>
+                                <td><span id='txthasInit'></span></td>
+                            </tr>
+                            <tr>
+                                <td>Private Sale Account</td>
+                                <td><span id='txtprivateSaleAccount'></span></td>
+                            </tr>
+                            <tr>
+                                <td>Private Invest Lock Tokens</td>
+                                <td><span id='txtprivateInvestLockToken'></span></td>
+                            </tr>
+                            <tr>
+                                <td>Private Sale Release Time</td>
+                                <td><span id='txtprivateSaleReleaseTime'></span></td>
+                            </tr>
+                            <tr>
+                                <td>Private Sale Invested<br/>(only Owner or PrivateSale Account)</td>
+                                <td><input type='text' id='privatesaleinvested'><input type='button' value='Get' onclick="contractUtils.getVal(getPrivateKey(), GCToken,'getPrivateSaleInvested', $('#txtgetPrivateSaleInvested'),$('#privatesaleinvested').val(),undefined,'1e+8')"/><br/>GCT <span id='txtgetPrivateSaleInvested'></span></td>
+                            </tr>
+                        </table>
+                    </fieldset>
+                </td>
+            </tr>
         </table>
         <script>
             $('#keysection').load('component/key.html');
-            
-            function loadContract(contractObj){
-                /*getContractVal(getPrivateKey(),GCToken,"getPrivateSaleInvested", "").then(function(r){
-                    console.log(r);
-                });*/
-
-                //setContractVal(getPrivateKey(),GCToken,"400000","1","setCrowdsaleAccount",null,"0x06d6913718A18e4f71Cd827e6Fa1105868D1B4c2");
+            function loadContract (){
+                let arr = ['owner', 'name','symbol','decimals','icoEndTime','crowdsaleAccount','hasInit','privateSaleAccount','privateSaleReleaseTime'];
                 
-                getContractVal(getPrivateKey(),GCToken,"crowdsaleAccount").then(function(r){
-                    console.log(r);
-                });
-            } 
-            function setContractVal(pkey,contractObj,gas,gasprice,functionName,display,...params){
-                let account = web3.eth.accounts.wallet.add(getPrivateKey());
-                let contract = new web3.eth.Contract(contractObj.abi, $('#txtgctaddress').val());
-                contract.options.from = account.address;
-                let f = eval("contract.methods."+functionName+"("+(params.length>0?"params":"")+")");                
-                if(params.length>0) f.arguments = params;;
-
-                f.estimateGas({
-                    from: account.address,
-                    gas: gas,
-                }).then(function(gasAmount){
-                    f.send({
-                        from: account.address,
-                        gasPrice: gasprice,
-                        gas: gas,
-                    }).then(function(r){
-                        if(display)display.append("Success Processing("+functionName+"):" + r);
-                        console.log("Success Process("+functionName+")", r);
-                    }).catch(function(error){
-                        if(display)display.append("Error Processing("+functionName+"):" + e);
-                    });
-                    web3.eth.accounts.wallet.remove(account.address);
-                })
-                .catch(function(error){
-                    if(display)display.append("Error Estimate Processing("+functionName+"):" + e);                    
-                    web3.eth.accounts.wallet.remove(account.address);
-                });
+                let gctTokenArr = [
+                    'totalSupply','cap','privateInvestLockToken',
+                ];
+                loadValues(arr);
+                loadValues(gctTokenArr, '1e+8');
             }
 
-            function getContractVal(pkey, contractObj, functionName,...params){
-                let account = web3.eth.accounts.wallet.add(getPrivateKey());
-                let contract = new web3.eth.Contract(contractObj.abi, $('#txtgctaddress').val());
-                contract.options.from = account.address;
-                let f = eval("contract.methods."+functionName+"("+(params.length>0?"params":"")+")");                
-                if(params.length>0) f.arguments = params;;
-
-                let result = f.call();
-                web3.eth.accounts.wallet.remove(account.address);
-                return result;
+            function loadValues(arr, decimals){                
+                arr.forEach(function(currentValue, index, arr){
+                    contractUtils.getVal(getPrivateKey(), GCToken,currentValue,$('#txt'+currentValue),undefined,decimals);
+                });
             }
-
         </script>
     </body>
 </html>

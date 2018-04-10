@@ -13,7 +13,7 @@ function printout(r){
  
 
 module.exports = function(deployer, network, accounts) {     
-    deployer.deploy(GCTCrowdsale, GCToken.address, icoEndTime, {from:config.ownerAccount}).then(function(){
+    deployer.deploy(GCTCrowdsale, GCToken.address,  {from:config.ownerAccount}).then(function(){
         return GCToken.deployed().then(function(gctInstance){
 
             gctInstance.setCrowdsaleAccount(GCTCrowdsale.address, {from:config.ownerAccount}).then(function(r){                
@@ -23,7 +23,7 @@ module.exports = function(deployer, network, accounts) {
                     crowdsaleInstance.init.estimateGas({from:ownerAccount}).then(function(r){
                         console.log("Init Estimate Gas:",r);
                     });*/
-                    crowdsaleInstance.init({from:config.ownerAccount}).then(function(r){
+                    crowdsaleInstance.init(icoEndTime,40000,{from:config.ownerAccount}).then(function(r){
                         console.log("GCT   Address : ",GCToken.address);
                         console.log("Crowd Address : ",GCTCrowdsale.address);
                     });

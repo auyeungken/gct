@@ -57,10 +57,16 @@
                     alert('Missing gct address');
                     return;
                 }
-                deployContract(getPrivateKey(),GCTCrowdsale,$("#gasprice").val(),[gct], $('#deployout'));
+                f = function(receipt){
+                    let pkey = getPrivateKey();
+                    let account = web3.eth.accounts.wallet.add(pkey);
+                    contractUtils.setContractVal(pkey,GCToken,"100000",$("#gasprice").val(),false,"0",'setCrowdsaleAccount',$('#deployout'),receipt.contractAddress);
+                    web3.eth.accounts.wallet.remove(account.address);
+                };
+                deployContract(getPrivateKey(),GCTCrowdsale,$("#gasprice").val(),[gct], $('#deployout'),f);
             }
             
-            function deployContract(pkey,contractObj,gasprice,args,display){
+            function deployContract(pkey,contractObj,gasprice,args,display,callSuccess){
                 let gas = contractObj.estimateGas;
                 let abi = contractObj.abi;
                 let data = contractObj.data;
@@ -84,6 +90,10 @@
                     display.append("<br/>transaction Hash : ",  transactionHash) ; */
                 }).on('receipt', function(receipt){
                     display.append("<br/>receipt:", receipt.contractAddress) // contains the new contract address
+                    console.log(receipt);
+                    if(callSuccess){
+                        callSuccess(receipt);
+                    }
                 }).on('confirmation', function(confirmationNumber, receipt){ 
                     display.append("<br/>confirmation:", confirmationNumber + "<br/>Receipt:" + receipt );
                 }).then(function(newContractInstance){

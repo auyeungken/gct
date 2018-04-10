@@ -6,8 +6,8 @@ var GCTCrowdsale = artifacts.require("../contracts/crowdsale/GCTCrowdsale");
 
 var gct,crowd;
 
-var minPurchaseAmt = 1000000000000000;
-var softcap = 5000000000000000000000;
+var minPurchaseAmt = 25000000000000000;
+var softcap = 2000000000000000000000000; // in USD with 18 decimal
 
 
 function randomBetween(min,max){

@@ -139,8 +139,8 @@ contract('GCToken Test', function(accounts) {
      
 
     // Must include the follow method into GCTToken in order for following testcase to work
-    // ********************************** need to remove after testing **************************
     /*
+    // ********************************** need to remove after testing **************************    
     function testSetPrivateSaleReleaseTime(uint _v) public {
         privateSaleReleaseTime = _v;
     }

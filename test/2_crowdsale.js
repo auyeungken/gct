@@ -5,9 +5,13 @@ var GCTCrowdsale = artifacts.require("../contracts/crowdsale/GCTCrowdsale");
 
 var gct,crowd;
 
-var minPurchaseAmt = 1000000000000000;
-var softcap = 5000000000000000000000;
+var minPurchaseAmt = 25000000000000000;
+var softcap = 2000000000000000000000000; // in USD with 18 decimal
 
+var gctPerUsd = 162;
+var usdPerEther = new BigNumber('40000');
+var weiPerToken = new BigNumber('15432098765432');
+var minPurchaseWei = new BigNumber('250000000000000000');
 
 function randomBetween(min,max){
     return BigNumber.random().times(max).plus(min).integerValue().toString();
@@ -35,6 +39,26 @@ contract('GCTCrowdsale Test', function(accounts) {
         let teamReserve = (await crowd.TEAM_RESERVE()).toNumber();
 
         assert.equal(reserve + ps + promotion + crowdsale + teamReserve, cap);
+    }); 
+
+    it("StageToken should add up to crowdsale",async function(){
+        let crowdsale = new BigNumber("6659024476e8"); // not include bonus amount
+
+        let total = new BigNumber(0);
+        for(let i=0; i < 5;i++){
+            total = total.plus((await crowd.stageTokenSupply(i)).toNumber());
+        }
+        assert.equal(crowdsale.toString(), total.toString());
+    }); 
+
+    it("Calculate variable should match",async function(){
+        let _usdPerEther = (await crowd.usdPerEther()).toNumber();
+        let _weiPerToken = (await crowd.weiPerToken()).toNumber();
+        let _minPurchaseWei = (await crowd.minPurchaseWei()).toNumber();
+
+        assert.equal(_usdPerEther.toString(), usdPerEther.toString(), "usdPerEther not match");
+        assert.equal(_weiPerToken.toString(), weiPerToken.toString(), "weiPerToken not match");
+        assert.equal(_minPurchaseWei.toString(), minPurchaseWei.toString(), "minPurchaseWei not match");
     }); 
 
     it("Team Reserve should addup to its total",async function(){
@@ -168,8 +192,9 @@ contract('GCTCrowdsale Test', function(accounts) {
             let weiBuyAmount = randomBetween(minPurchaseAmt,"9000000000000000000000");            
             let buyFromAccount = arrayAcct[Math.floor(Math.random() * 3)];
             let beforeAcctBalBig = await web3.eth.getBalance(buyFromAccount);
+            
 
-            console.log(i +") Purchase by("+buyFromAccount+"), pause("+toPause+") : ",weiBuyAmount);
+            console.log(i +") Purchase by("+buyFromAccount+"), pause("+toPause+") : ",weiBuyAmount , " WEI");
 
             // the subtract just to ensure enough ether to pay gas
             if(i== (numPurchase-1))weiBuyAmount = beforeAcctBalBig.sub(new BigNumber("1000000000000000000"));
@@ -178,6 +203,7 @@ contract('GCTCrowdsale Test', function(accounts) {
             assert.isTrue(beforeAcctBalBig.gte(new BigNumber(minPurchaseAmt)),"Must have at least min purchase amt"); 
 
             let beforeWeiRaisedBig = await crowd.weiRaised();
+            let beforeUsdRaisedBig = await crowd.usdRaised();
             
             if(toPause){
                 await crowd.sendTransaction({from:buyFromAccount, value:weiBuyAmount}).then(function(r){
@@ -195,9 +221,16 @@ contract('GCTCrowdsale Test', function(accounts) {
             // need add the gas price to calculate the actual used wei for token purchase
             let afterAcctBalBig = await web3.eth.getBalance(buyFromAccount).add(gasAmtInWei);
             let afterWeiRaisedBig = await crowd.weiRaised();
+            let afterUsdRaisedBig = await crowd.usdRaised();
+
+            let actualUsdRasiedBig = afterUsdRaisedBig.minus(beforeUsdRaisedBig);
+            let actualWeiRasiedBig = afterWeiRaisedBig.minus(beforeWeiRaisedBig);
+
+            console.log("Raised USD: ",actualUsdRasiedBig.toString(), ", Raised Wei:", actualWeiRasiedBig.toString() );
+            assert.equal(actualUsdRasiedBig.toString(),actualWeiRasiedBig.times(usdPerEther).toString(),"Raised USD amount not match");
 
             //console.log("Before : " ,beforeAcctBalBig.toString(), ", After:",afterAcctBalBig.toString() );
-            assert.equal(afterWeiRaisedBig.minus(beforeWeiRaisedBig).toString(),beforeAcctBalBig.minus(afterAcctBalBig).toString(), 
+            assert.equal(actualWeiRasiedBig.toString(),beforeAcctBalBig.minus(afterAcctBalBig).toString(), 
                         i +")Raised amount must equal to balance difference");
         }
 
@@ -205,12 +238,12 @@ contract('GCTCrowdsale Test', function(accounts) {
         let crowdsaleMintedBig =  await crowd.crowdsaleMinted();
         assert.isTrue(capBig.eq(crowdsaleMintedBig), "All crowdsale portal had not sold out");
 
-        let totalWeiRaisedBig = await crowd.weiRaised(); 
-        let targetWeiAmtBig = new BigNumber("66590272730000000000000");
-        assert.isTrue(totalWeiRaisedBig.eq(targetWeiAmtBig), "Raised amount should match");
+        let totalUSDRaisedBig = await crowd.usdRaised(); 
+        let targetUSDAmtBig = new BigNumber("41105089.35e18"); 
+        assert.equal(totalUSDRaisedBig.toString(),targetUSDAmtBig.toString(), "Raised amount should match");
     });
 
-     it("All Token puchased, cannot buy more",async function(){ 
+    /*it("All Token puchased, cannot buy more",async function(){ 
         let weiBuyAmount = minPurchaseAmt;            
         let buyFromAccount = config.testAccount1;
         
@@ -250,7 +283,7 @@ contract('GCTCrowdsale Test', function(accounts) {
         }).catch(function(e){
             assert.isTrue(isVMErr(e.message), e.message);
         });            
-    }); 
+    }); */
 
     
     // Must include the follow method into GCTCrowdsale in order for following testcase to work
@@ -258,8 +291,8 @@ contract('GCTCrowdsale Test', function(accounts) {
     // 1) TEAM_CAN_CLAIM_AFTER
     // 2) CLAIM_STAGE
     // 3) COMPANY_RESERVE_FOR
-    // ********************************** need to remove after testing **************************
     /*
+    // ********************************** need to remove after testing **************************   
     event TestCompanyReserve(uint _v);
     event TestTeam(uint _v1, uint _v2);
     
@@ -281,7 +314,7 @@ contract('GCTCrowdsale Test', function(accounts) {
     
     */
    
-
+/*
     it("Team Reserve Claim",async function(){ 
         var reserveAmt = [
             "865800000000000", "1731600000000000", "2597400000000000", "3463200000000000", "4329000000000000", 
@@ -352,5 +385,5 @@ contract('GCTCrowdsale Test', function(accounts) {
         let teamReserve = await crowd.TEAM_RESERVE();        
         assert.equal(bal.toString(), teamReserve.toString(), "final Balance and claimed must equal");
     });
-
+*/
 });
