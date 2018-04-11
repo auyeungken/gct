@@ -30,14 +30,68 @@
                 <td colspan="2">
                     <fieldset>
                         <legend><h3>GCT Operation</h3></legend>
-                        <table>
+                        <table border="1">
                             <tr>
-                                <td>Set Crowdsale Account<br/>(Only Contract Owner)</td>
-                                <td></td>
+                                <td>Set Crowdsale Contract Address<br/>(Only Contract Owner)</td>
+                                <td>
+                                    <div class="operation">
+                                        <table>                                            
+                                            <tr>
+                                                <td class="require">Address</td>
+                                                <td><input type="text" name="param"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Gas</td>
+                                                <td><input type="text" name="gas"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="2">
+                                                    <input type="button" value="Estimate Gas" onclick="contractUtils.sendValue('setCrowdsaleAccount',this,true,GCToken)"/>
+                                                    <input type="button" value="Send" onclick="contractUtils.sendValue('setCrowdsaleAccount',this,false,GCToken)"/>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="2"><hr/></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="result" colspan="2">Result : <span class="result output" name="result"></span></td>
+                                            </tr>
+                                        </table>                                        
+                                    </div>
+                                </td>
                             </tr>
                             <tr>
                                 <td>Private Sale Transfer<br/>(Only Private Sale Account)</td>
-                                <td></td>
+                                <td>
+                                    <div class="operation">
+                                        <table>
+                                            <tr>
+                                                <td class="require">To Address</td>
+                                                <td><input type="text" name="param"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="require">Token Amount</td>
+                                                <td><input type="text" name="param"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Gas</td>
+                                                <td><input type="text" name="gas"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="2">
+                                                    <input type="button" value="Estimate Gas" onclick="contractUtils.sendValue('privateSaleTransfer',this,true,GCToken)"/>
+                                                    <input type="button" value="Send" onclick="contractUtils.sendValue('privateSaleTransfer',this,false,GCToken)"/>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="2"><hr/></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="result" colspan="2">Result : <span class="result output" name="result"></span></td>
+                                            </tr>
+                                        </table>                                        
+                                    </div>
+                                </td>
                             </tr>
                         </table>
                     </fieldset>

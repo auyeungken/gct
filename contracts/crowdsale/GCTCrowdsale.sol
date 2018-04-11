@@ -74,7 +74,7 @@ contract GCTCrowdsale is AccountAddress, Pausable, Whitelist {
     uint constant public CROWDSALE_SUPPLY    = 8100000000e8;  // total tokens for crowdsale
     // ------------------------------------------------------------------------------------------------------------------------
     
-    uint constant public SOFTCAP             = 2000000e18;  // In USD
+    uint constant public SOFTCAP             = 2000000e20;  // In USD
     uint constant public MIN_PURCHASE_USD    = 100e20;
     uint constant public GCT_PER_USD         = 162;
 
@@ -93,7 +93,7 @@ contract GCTCrowdsale is AccountAddress, Pausable, Whitelist {
     uint constant public PRIVATE_INVEST_LOCK_TOKEN =  20000000e8;
 
     // company reseved release minutes
-    uint  public COMPANY_RESERVE_FOR = 182 days; // this equivalent to 6 months
+    uint constant public COMPANY_RESERVE_FOR = 182 days; // this equivalent to 6 months
 
     //Total wei sum an address has invested
     mapping(address => uint) public investedSum;
@@ -129,10 +129,10 @@ contract GCTCrowdsale is AccountAddress, Pausable, Whitelist {
     uint public refundedWei;
     
     // team can start claiming tokens N days after ICO
-    uint   public TEAM_CAN_CLAIM_AFTER = 120 days;// this equivalent to 4 months
+    uint constant public TEAM_CAN_CLAIM_AFTER = 120 days;// this equivalent to 4 months
 
     // period between each claim from team
-    uint   public CLAIM_STAGE = 30 days;
+    uint constant public CLAIM_STAGE = 30 days;
 
     // the amount of token each stage team can claim
     uint[] public teamReserve = [8658000e8, 17316000e8, 25974000e8, 34632000e8, 43290000e8, 51948000e8, 60606000e8, 69264000e8, 77922000e8, 86580000e8, 95238000e8, 103896000e8, 112554000e8, 121212000e8, 129870000e8, 138528000e8, 147186000e8, 155844000e8, 164502000e8, 173160000e8, 181820000e8];
@@ -347,24 +347,5 @@ contract GCTCrowdsale is AccountAddress, Pausable, Whitelist {
         if (usdRaised >= SOFTCAP){
             WALLET.transfer(address(this).balance);
         }
-    }
-
-    // ********************************** need to remove after testing **************************
-    event TestCompanyReserve(uint _v);
-    event TestTeam(uint _v1, uint _v2);
-    
-    function testSetIcoEndTime(uint _v)public{
-        icoEndTime = _v;
-    }
-
-    function testTeamCanClaim(uint _claimAfter, uint _claimStage) public {
-        TEAM_CAN_CLAIM_AFTER = _claimAfter * 1 seconds;
-        CLAIM_STAGE = _claimStage * 1 seconds;
-        emit TestTeam(TEAM_CAN_CLAIM_AFTER,CLAIM_STAGE);
-    }
-
-    function testCompanyReserve(uint _v) public {
-        COMPANY_RESERVE_FOR = _v * 1 seconds;
-        emit TestCompanyReserve(COMPANY_RESERVE_FOR);
     }
 }

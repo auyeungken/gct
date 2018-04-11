@@ -9,9 +9,19 @@ var minPurchaseAmt = 25000000000000000;
 var softcap = 2000000000000000000000000; // in USD with 18 decimal
 
 var gctPerUsd = 162;
+var minUSDPurchase = 100;
+var etherWithDec = new BigNumber('1e20');
 var usdPerEther = new BigNumber('40000');
-var weiPerToken = new BigNumber('15432098765432');
-var minPurchaseWei = new BigNumber('250000000000000000');
+var weiPerToken;  //new BigNumber('15432098765432');
+var minPurchaseWei; //new BigNumber('250000000000000000');
+var expectEarnUSD = new BigNumber("41105089.35802469135802").dp(2);
+
+calculate();
+function calculate(){
+    weiPerToken = etherWithDec.div(usdPerEther.times(gctPerUsd)).dp(0);  //new BigNumber('15432098765432');
+    minPurchaseWei = etherWithDec.times(minUSDPurchase).div(usdPerEther).dp(0); //new BigNumber('250000000000000000');
+    console.log("Calculate => ", "weiPerToken:", weiPerToken.toString(), ", minPurchaseWei", minPurchaseWei.toString());
+}
 
 function randomBetween(min,max){
     return BigNumber.random().times(max).plus(min).integerValue().toString();
@@ -145,7 +155,7 @@ contract('GCTCrowdsale Test', function(accounts) {
             assert.isTrue((await crowd.whitelist(arrayAcct[i])), arrayAcct[i] + " should have add to whitelist");
         }
 
-        var numPurchase = 10;
+        var numPurchase = 100;
         for(var i=0; i < numPurchase; i++){
             let gasAmtInWei = 0;
             var toPause = BigNumber.random() > 0.5;
@@ -189,7 +199,7 @@ contract('GCTCrowdsale Test', function(accounts) {
             assert.equal(toPause, await crowd.paused.call(), "Pause status should be equal");
 
 
-            let weiBuyAmount = randomBetween(minPurchaseAmt,"9000000000000000000000");            
+            let weiBuyAmount = randomBetween(minPurchaseAmt,new BigNumber("9000000000000000000000").div(numPurchase).toString() );            
             let buyFromAccount = arrayAcct[Math.floor(Math.random() * 3)];
             let beforeAcctBalBig = await web3.eth.getBalance(buyFromAccount);
             
@@ -238,12 +248,14 @@ contract('GCTCrowdsale Test', function(accounts) {
         let crowdsaleMintedBig =  await crowd.crowdsaleMinted();
         assert.isTrue(capBig.eq(crowdsaleMintedBig), "All crowdsale portal had not sold out");
 
-        let totalUSDRaisedBig = await crowd.usdRaised(); 
-        let targetUSDAmtBig = new BigNumber("41105089.35e18"); 
-        assert.equal(totalUSDRaisedBig.toString(),targetUSDAmtBig.toString(), "Raised amount should match");
+        let totalUSDRaisedBig = await crowd.usdRaised();
+        console.log("Total =>" , "totalUSDRaisedBig:",totalUSDRaisedBig.div(new BigNumber("1e20")).toString(), ", expectEarnUSD:", expectEarnUSD.toString());
+        totalUSDRaisedBig = (totalUSDRaisedBig.div(new BigNumber("1e20")));
+        totalUSDRaisedBig = new BigNumber(totalUSDRaisedBig.toString()).dp(2);
+        assert.equal(totalUSDRaisedBig.toString(),expectEarnUSD.toString(), "Raised amount should match");
     });
 
-    /*it("All Token puchased, cannot buy more",async function(){ 
+    it("All Token puchased, cannot buy more",async function(){ 
         let weiBuyAmount = minPurchaseAmt;            
         let buyFromAccount = config.testAccount1;
         
@@ -283,7 +295,7 @@ contract('GCTCrowdsale Test', function(accounts) {
         }).catch(function(e){
             assert.isTrue(isVMErr(e.message), e.message);
         });            
-    }); */
+    }); 
 
     
     // Must include the follow method into GCTCrowdsale in order for following testcase to work
@@ -314,7 +326,7 @@ contract('GCTCrowdsale Test', function(accounts) {
     
     */
    
-/*
+
     it("Team Reserve Claim",async function(){ 
         var reserveAmt = [
             "865800000000000", "1731600000000000", "2597400000000000", "3463200000000000", "4329000000000000", 
@@ -385,5 +397,4 @@ contract('GCTCrowdsale Test', function(accounts) {
         let teamReserve = await crowd.TEAM_RESERVE();        
         assert.equal(bal.toString(), teamReserve.toString(), "final Balance and claimed must equal");
     });
-*/
 });

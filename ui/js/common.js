@@ -12,8 +12,13 @@ const contractUtils = {
         let paramStr = "";
         if(params && params.length>0 && params[0] != '') {
             for(let i=0; i < params.length;i++){
-                if(i>0)paramStr += ",";
-                paramStr += "'" +  params[i] + "'" ;
+                if(Array.isArray(params[i])){
+                    for(let j=0; j < params[i].length;j++){
+                        paramStr += (j>0?",":"") + "'" +  params[i][j] + "'" ;
+                    }
+                }else{
+                    paramStr += (i>0?",":"") + "'" +  params[i] + "'" ;
+                }
             }
         }
         if($.isNumeric(ether)){
@@ -23,6 +28,7 @@ const contractUtils = {
         }
         
         let fStr = "contract.methods."+functionName+"("+paramStr+")";
+        
         if(contractUtils.debug)console.log("Call Set("+fStr+") : ", '=>From:',account.address, '=>ether:', ether, '=> Gas:', gas, '=> GasPrice:', gasprice);
         let f = eval(fStr);
         
@@ -109,7 +115,7 @@ const contractUtils = {
         str += "</ol>";
         display.html(str);
     },
-    sendValue: function(functionName, obj, estimateOnly = false){
+    sendValue: function(functionName, obj, estimateOnly = false,contractObj=GCTCrowdsale){
         let param = [];
         let pObj = $(obj).parents('.operation');
         let arr = pObj.find("input[name='param']").each(function(index,elm){
@@ -121,6 +127,6 @@ const contractUtils = {
         let ether = pObj.find("input[name='ether']").val();
 
         display.html("");
-        contractUtils.setContractVal(getPrivateKey(), GCTCrowdsale,gas,gasprice,estimateOnly,ether,functionName,display,param);
+        contractUtils.setContractVal(getPrivateKey(),contractObj,gas,gasprice,estimateOnly,ether,functionName,display,param);
     },
 };

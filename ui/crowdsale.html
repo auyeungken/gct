@@ -25,7 +25,7 @@
                 <td colspan="2">
                     <fieldset>
                         <legend><h3>GCT Operation</h3></legend>
-                        <table border=1>
+                        <table border="1">
                             <tr>
                                 <td colspan="2">
                                     Gas Price in Gwei <input type="text" id="gasprice" value="1" onkeyup="$('#gasWeiAmt').html(convertToWei($(this).val(),'9').toString())"/> (Wei : <span id="gasWeiAmt"></span>)
@@ -47,6 +47,10 @@
                                                 <td><input type="text" name="param"/></td>
                                             </tr>
                                             <tr>
+                                                <td class="require">ETH/USD</td>
+                                                <td><input type="text" name="param"/> Ex. 410.15 type 41015</td>
+                                            </tr>
+                                            <tr>
                                                 <td>Gas</td>
                                                 <td><input type="text" name="gas"/></td>
                                             </tr>
@@ -54,6 +58,36 @@
                                                 <td colspan="2">
                                                     <input type="button" value="Estimate Gas" onclick="contractUtils.sendValue('init',this,true)"/>
                                                     <input type="button" value="Send" onclick="contractUtils.sendValue('init',this)"/>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="2"><hr/></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="result" colspan="2">Result : <span class="result output" name="result"></span></td>
+                                            </tr>
+                                        </table>
+                                        
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Update ETH/USD<br/>(Only Contract Owner)</td>
+                                <td>
+                                    <div class="operation">
+                                        <table>
+                                            <tr>
+                                                <td class="require">ETH/USD</td>
+                                                <td><input type="text" name="param"/> Ex. 410.15 type 41015</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Gas</td>
+                                                <td><input type="text" name="gas"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="2">
+                                                    <input type="button" value="Estimate Gas" onclick="contractUtils.sendValue('updateExchangeRate',this,true)"/>
+                                                    <input type="button" value="Send" onclick="contractUtils.sendValue('updateExchangeRate',this)"/>
                                                 </td>
                                             </tr>
                                             <tr>
@@ -237,7 +271,7 @@
                     </fieldset>
                     <fieldset>
                         <legend><h3>Get Crowdsale Info - <input type="button" value="Load Contract" onclick="loadContract()"/></h3></legend>
-                        <table border=1>
+                        <table border="1">
                             <tr>
                                 <td class="important">Has Initialized</td>
                                 <td><span id='txthasInit'></span></td>
@@ -321,15 +355,19 @@
                             
                             <tr>
                                 <td>Softcap</td>
-                                <td>ETH <span id='txtSOFTCAP'></span></td>
+                                <td>USD <span id='txtSOFTCAP'></span></td>
+                            </tr>                            
+                            <tr>
+                                <td>GCT Per USD</td>
+                                <td>ETH <span id='txtGCT_PER_USD'></span></td>
                             </tr>
                             <tr>
-                                <td>Ether Per Token</td>
-                                <td>ETH <span id='txtWEI_PER_TOKEN'></span></td>
+                                <td>USD Per Ether</td>
+                                <td>USD <span id='txtusdPerEther'></span></td>
                             </tr>
                             <tr>
-                                <td>Min Ether Per Purchase</td>
-                                <td>ETH <span id='txtMIN_WEI_TO_PURCHASE'></span></td>
+                                <td>Min USD Per Purchase</td>
+                                <td>USD <span id='txtMIN_PURCHASE_USD'></span></td>
                             </tr>
                             <tr>
                                 <td>Private Sale Lockout</td>
@@ -354,6 +392,10 @@
                             <tr>
                                 <td>Ether Raised(From Crowdsale)</td>
                                 <td>ETH <span id='txtweiRaised'></span></td>
+                            </tr>
+                            <tr>
+                                <td>USD Raised(From Crowdsale)</td>
+                                <td>USD <span id='txtusdRaised'></span></td>
                             </tr>
                             <tr>
                                 <td>Company Claimed Reserve</td>
@@ -402,18 +444,22 @@
                 let arr = [
                     'owner', 'WALLET','ADMIN_ACCOUNT','COMPANY_ACCOUNT','PRIVATE_SALE_ACCOUNT','TEAM_ACCOUNT','PROMOTION_ACCOUNT',
                     'decimals','PRIVATE_TRANSFER_LOCKOUT','PRIVATE_INVEST_LOCK_TOKEN','COMPANY_RESERVE_FOR','token','hasInit','companyClaimed','crowdsaleClosed',
-                    'icoEndTime','crowdsaleMinted','TEAM_CAN_CLAIM_AFTER','CLAIM_STAGE','paused',
+                    'icoEndTime','crowdsaleMinted','TEAM_CAN_CLAIM_AFTER','CLAIM_STAGE','paused','GCT_PER_USD',
                 ];
 
                 let gctTokenArr = [
                     'CAPPED_SUPPLY','TEAM_RESERVE','COMPANY_RESERVE','PRIVATE_SALE','PROMOTION_PROGRAM','CROWDSALE_SUPPLY','PRIVATE_INVEST_LOCK_TOKEN'
                 ];
 
-                let etherArr = ['SOFTCAP','WEI_PER_TOKEN','MIN_WEI_TO_PURCHASE','weiRaised','getBalance'];
+                let etherArr = ['weiRaised','getBalance'];
+                let usdArr = ['SOFTCAP','usdRaised','MIN_PURCHASE_USD'];
+                let currencyArr = ['usdPerEther'];
                 
                 loadValues(arr);
                 loadValues(gctTokenArr, '1e+8');
                 loadValues(etherArr, '1e+18');
+                loadValues(usdArr, '1e+20');
+                loadValues(currencyArr, '1e+2');
 
                 
                 loadArrVales('teamReserve',21 , '1e+8');

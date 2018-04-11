@@ -48,10 +48,10 @@
             </tr>    
             <tr>
                 <td></td>
-                <td><input type="button" value="Transfer" onclick="transfer()"/></td>
+                <td><input id='txbutton' type="button" value="Transfer" onclick="transfer()"/></td>
             </tr>
         </table>
-        <script>           
+        <script type='text/javascript'>           
             $('#keysection').load('component/key.html');
 
             async function transfer(){
@@ -71,15 +71,17 @@
                 }
 
                 if(confirm("Do you wish to send "+amt+" ETH \n\t=> address "+toAddr+"?")){
+                    $('#txbutton').attr("disabled", true);
                     let pkey = getPrivateKey();
                    
                     
                     let account = web3.eth.accounts.wallet.add(pkey);
                     let wei = convertToWei(amt);
-                    let acctBal = getBalance(account.address,true);
+                    let acctBal = await getBalance(account.address,true);
                     
                     if(acctBal.lte(wei)){
                         alert("Insufficient Fund, only have " + acctBal.div("1e+18") + " ETH");
+                        $('#txbutton').attr("disabled", false);
                         return;
                     }
     
@@ -99,8 +101,10 @@
                         
                         //$("#status").html(JSON.stringify(r));
                         $("#status").html(str);
+                        $('#txbutton').attr("disabled", false);
                     }).catch(function(e){
                         $("#status").html("Error:"+e);
+                        $('#txbutton').attr("disabled", false);
                     });
                     web3.eth.accounts.wallet.remove(account.address);
                 }
