@@ -81,7 +81,7 @@ contract GCTCrowdsale is AccountAddress, Pausable, Whitelist {
     uint public usdPerEther; // Multiplies 100 to remove decimal
 
     // wei per GCT
-    uint public weiPerToken;
+    uint public weiPerGCT;
 
     // minimum purchase wei amount
     uint public minPurchaseWei; 
@@ -179,7 +179,7 @@ contract GCTCrowdsale is AccountAddress, Pausable, Whitelist {
         usdPerEther = _usdPerEther;
 
         // 1e20 equivalent of 1ETH * 100(remove currency decimal place for usdPerEther)
-        weiPerToken = uint(1e20).div(usdPerEther.mul(GCT_PER_USD));
+        weiPerGCT = uint(1e20).div(usdPerEther.mul(GCT_PER_USD));
         minPurchaseWei = MIN_PURCHASE_USD.div(usdPerEther);
     }
 
@@ -292,7 +292,7 @@ contract GCTCrowdsale is AccountAddress, Pausable, Whitelist {
     * @return Amount of wei refund to beneficiary 
     */
     function _getTokenAmount(uint256 _weiAmount) internal returns (uint256,uint256) {
-        uint buyTokenAmount = _weiAmount.div(weiPerToken).mul(10 ** uint(decimals));
+        uint buyTokenAmount = _weiAmount.div(weiPerGCT).mul(10 ** uint(decimals));
         uint actualSoldTokens;
         uint actualBonusToken;
         
@@ -325,7 +325,7 @@ contract GCTCrowdsale is AccountAddress, Pausable, Whitelist {
             }
         }
 
-        return (actualSoldTokens.add(actualBonusToken), _weiAmount.sub(actualSoldTokens.div(10 ** uint(decimals)).mul(weiPerToken)));
+        return (actualSoldTokens.add(actualBonusToken), _weiAmount.sub(actualSoldTokens.div(10 ** uint(decimals)).mul(weiPerGCT)));
     }
     
     /**

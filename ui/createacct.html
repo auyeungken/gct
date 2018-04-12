@@ -3,7 +3,7 @@
         <script>
            
             function createEthAccount(){
-                let acct = web3.eth.accounts.create(generateRandomStr(32));
+                let acct = web3js.eth.accounts.create(generateRandomStr(32));
                 
                 $("#address").html(acct.address);
                 $("#privatekey").html(acct.privateKey);
@@ -25,7 +25,7 @@
                     $("#testcmd").html("echo '"+fixEnc+"' | openssl enc -d -aes-256-cbc -a -k [Encrypt Password] -md md5");
                 }
         
-                let signdata = web3.eth.accounts.sign('GCT Token', acct.privateKey);
+                let signdata = web3js.eth.accounts.sign('GCT Token', acct.privateKey);
                 $("#signaddress").html(acct.address);
                 $("#sign").html(signdata.signature);
                 $("#signmessage").html(signdata.message);

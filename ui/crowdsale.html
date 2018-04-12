@@ -2,7 +2,7 @@
     <body>
         <table>
             <tr>
-                <td colspan="2"><h1>GCT Contract</h1></td>
+                <td colspan="2"><h1>Crowdsale Contract</h1></td>
             </tr>
             <tr>
                 <td colspan="2">
@@ -14,7 +14,7 @@
             </tr>
             <tr>
                 <td>                    
-                    Contract Address : <input type="text" id='txtgctaddress' value="0x06d6913718A18e4f71Cd827e6Fa1105868D1B4c2"/>
+                    Contract Address : <input type="text" id='txtgctaddress' value=""/>
                     <input type="button" value="Load Contract" onclick="loadContract()"/>
                 </td>                
             </tr>
@@ -26,6 +26,7 @@
                     <fieldset>
                         <legend><h3>GCT Operation</h3></legend>
                         <table border="1">
+                            <!--
                             <tr>
                                 <td colspan="2">
                                     Gas Price in Gwei <input type="text" id="gasprice" value="1" onkeyup="$('#gasWeiAmt').html(convertToWei($(this).val(),'9').toString())"/> (Wei : <span id="gasWeiAmt"></span>)
@@ -33,6 +34,7 @@
                                     <br/>
                                 </td>
                             </tr>
+                        -->
                             <tr>
                                 <th>Operation Name</th>
                                 <th>Parameters</th>
@@ -48,16 +50,16 @@
                                             </tr>
                                             <tr>
                                                 <td class="require">ETH/USD</td>
-                                                <td><input type="text" name="param"/> Ex. 410.15 type 41015</td>
+                                                <td><input type="text" id='initexrate'/><input type="hidden" name="param"/></td>
                                             </tr>
-                                            <tr>
+                                            <!-- <tr>
                                                 <td>Gas</td>
-                                                <td><input type="text" name="gas"/></td>
-                                            </tr>
+                                                <td><input type="text" name="gas" value="1000000"/></td>
+                                            </tr>-->  
                                             <tr>
                                                 <td colspan="2">
-                                                    <input type="button" value="Estimate Gas" onclick="contractUtils.sendValue('init',this,true)"/>
-                                                    <input type="button" value="Send" onclick="contractUtils.sendValue('init',this)"/>
+                                                    <input type="button" value="Estimate Gas" onclick="initContract(this,true)"/>
+                                                    <input type="button" value="Send" onclick="initContract(this,false)"/>
                                                 </td>
                                             </tr>
                                             <tr>
@@ -78,16 +80,16 @@
                                         <table>
                                             <tr>
                                                 <td class="require">ETH/USD</td>
-                                                <td><input type="text" name="param"/> Ex. 410.15 type 41015</td>
+                                                <td><input type="text" id='exrate'/><input type="hidden" name="param"/></td>
                                             </tr>
-                                            <tr>
+                                            <!-- <tr>
                                                 <td>Gas</td>
-                                                <td><input type="text" name="gas"/></td>
-                                            </tr>
+                                                <td><input type="text" name="gas" value="1000000"/></td>
+                                            </tr>-->  
                                             <tr>
                                                 <td colspan="2">
-                                                    <input type="button" value="Estimate Gas" onclick="contractUtils.sendValue('updateExchangeRate',this,true)"/>
-                                                    <input type="button" value="Send" onclick="contractUtils.sendValue('updateExchangeRate',this)"/>
+                                                    <input type="button" value="Estimate Gas" onclick="updateExRate(this,true)"/>
+                                                    <input type="button" value="Send" onclick="updateExRate(this,false)"/>
                                                 </td>
                                             </tr>
                                             <tr>
@@ -106,10 +108,10 @@
                                 <td>
                                     <div class="operation">
                                         <table>
-                                            <tr>
+                                            <!-- <tr>
                                                 <td>Gas</td>
-                                                <td><input type="text" name="gas"/></td>
-                                            </tr>
+                                                <td><input type="text" name="gas" value="1000000"/></td>
+                                            </tr>-->  
                                             <tr>
                                                 <td colspan="2">
                                                     <input type="button" value="Estimate Gas" onclick="contractUtils.sendValue('claimCompanyReserve',this,true)"/>
@@ -131,10 +133,10 @@
                                 <td>
                                     <div class="operation">
                                         <table>     
-                                            <tr>
+                                            <!-- <tr>
                                                 <td>Gas</td>
-                                                <td><input type="text" name="gas"/></td>
-                                            </tr>         
+                                                <td><input type="text" name="gas" value="1000000"/></td>
+                                            </tr>-->        
                                             <tr>
                                                 <td colspan="2">
                                                     <input type="button" value="Estimate Gas" onclick="contractUtils.sendValue('claimTeamToken',this,true)"/>
@@ -157,10 +159,10 @@
                                 <td>
                                     <div class="operation">
                                         <table>   
-                                            <tr>
+                                            <!-- <tr>
                                                 <td>Gas</td>
-                                                <td><input type="text" name="gas"/></td>
-                                            </tr>     
+                                                <td><input type="text" name="gas" value="1000000"/></td>
+                                            </tr>-->       
                                             <tr>
                                                 <td colspan="2">
                                                     <input type="button" value="Pause" onclick="contractUtils.sendValue('pause',this)"/>
@@ -187,10 +189,10 @@
                                                 <td class="require">Whitelist Address</td>
                                                 <td><input type="text" name="param"/></td>
                                             </tr>
-                                            <tr>
+                                            <!-- <tr>
                                                 <td>Gas</td>
-                                                <td><input type="text" name="gas"/></td>
-                                            </tr>
+                                                <td><input type="text" name="gas" value="1000000"/></td>
+                                            </tr>-->  
                                             <tr>
                                                 <td colspan="2">
                                                     <input type="button" value="Estimate Gas" onclick="contractUtils.sendValue('addToWhitelist',this,true)"/>
@@ -221,10 +223,10 @@
                                                 <td class="require">Ether Amount</td>
                                                 <td><input type="text" name="ether"/></td>
                                             </tr>
-                                            <tr>
+                                            <!-- <tr>
                                                 <td>Gas</td>
-                                                <td><input type="text" name="gas"/></td>
-                                            </tr>
+                                                <td><input type="text" name="gas" value="1000000"/></td>
+                                            </tr>-->  
                                             <tr>
                                                 <td colspan="2">
                                                     <input type="button" value="Estimate Gas" onclick="contractUtils.sendValue('buyTokens',this,true)"/>
@@ -245,11 +247,11 @@
                                 <td>Close Crowdsale<br/>(Only Contract Owner)</td>
                                 <td>
                                     <div class="operation">
-                                        <table>   
-                                            <tr>
+                                        <table>
+                                            <!-- <tr>
                                                 <td>Gas</td>
-                                                <td><input type="text" name="gas"/></td>
-                                            </tr>     
+                                                <td><input type="text" name="gas" value="1000000"/></td>
+                                            </tr>-->  
                                             <tr>
                                                 <td colspan="2">
                                                     <input type="button" value="Estimate Gas" onclick="contractUtils.sendValue('closeCrowdsale',this,true)"/>
@@ -359,16 +361,24 @@
                             </tr>                            
                             <tr>
                                 <td>GCT Per USD</td>
-                                <td>ETH <span id='txtGCT_PER_USD'></span></td>
+                                <td>GCT <span id='txtGCT_PER_USD'></span></td>
                             </tr>
                             <tr>
                                 <td>USD Per Ether</td>
                                 <td>USD <span id='txtusdPerEther'></span></td>
                             </tr>
                             <tr>
+                                <td>ETH Per GCT</td>
+                                <td>ETH <span id='txtweiPerGCT'></span></td>
+                            </tr>
+                            <tr>
                                 <td>Min USD Per Purchase</td>
                                 <td>USD <span id='txtMIN_PURCHASE_USD'></span></td>
                             </tr>
+                            <tr>
+                                <td>Min ETH Per Purchase</td>
+                                <td>ETH <span id='txtminPurchaseWei'></span></td>
+                            </tr>                           
                             <tr>
                                 <td>Private Sale Lockout</td>
                                 <td><span id='txtPRIVATE_TRANSFER_LOCKOUT'></span> Seconds</td>
@@ -390,11 +400,11 @@
                                 <td><input type='text' id='tokensAllocated'><input type='button' value='Get' onclick="contractUtils.getVal(getPrivateKey(), GCTCrowdsale, 'tokensAllocated',$('#txttokensAllocated'),$('#tokensAllocated').val(),'1e+8')"/><br/>GCT <span id='txttokensAllocated'></span></td>
                             </tr>                            
                             <tr>
-                                <td>Ether Raised(From Crowdsale)</td>
+                                <td>Ether Raised from Crowdsale</td>
                                 <td>ETH <span id='txtweiRaised'></span></td>
                             </tr>
                             <tr>
-                                <td>USD Raised(From Crowdsale)</td>
+                                <td>USD Raised from Crowdsale</td>
                                 <td>USD <span id='txtusdRaised'></span></td>
                             </tr>
                             <tr>
@@ -439,7 +449,9 @@
             </tr>
         </table>
         <script>
-            $('#keysection').load('component/key.html');
+            //$('#keysection').load('component/key.html');
+            $('#txtgctaddress').val(crowdsaleContractAddr);
+
             function loadContract (){
                 let arr = [
                     'owner', 'WALLET','ADMIN_ACCOUNT','COMPANY_ACCOUNT','PRIVATE_SALE_ACCOUNT','TEAM_ACCOUNT','PROMOTION_ACCOUNT',
@@ -451,7 +463,7 @@
                     'CAPPED_SUPPLY','TEAM_RESERVE','COMPANY_RESERVE','PRIVATE_SALE','PROMOTION_PROGRAM','CROWDSALE_SUPPLY','PRIVATE_INVEST_LOCK_TOKEN'
                 ];
 
-                let etherArr = ['weiRaised','getBalance'];
+                let etherArr = ['weiRaised','getBalance','minPurchaseWei','weiPerGCT',];
                 let usdArr = ['SOFTCAP','usdRaised','MIN_PURCHASE_USD'];
                 let currencyArr = ['usdPerEther'];
                 
@@ -476,6 +488,20 @@
                 arr.forEach(function(functionName, index, arr){
                     contractUtils.getVal(getPrivateKey(), GCTCrowdsale, functionName,$('#txt'+functionName),undefined,decimals);
                 });
+            }
+
+            function initContract(obj,isEstimate){
+                let o = $('#initexrate');
+                let ex = new BigNumber(o.val()).times(100);
+                o.parent().find('input[name="param"]').val(ex.toString());
+                contractUtils.sendValue('init',obj,isEstimate);
+            }
+
+            function updateExRate(obj,isEstimate){
+                let o = $('#exrate');
+                let ex = new BigNumber(o.val()).times(100);
+                o.parent().find('input[name="param"]').val(ex.toString());
+                contractUtils.sendValue('updateExchangeRate',obj,isEstimate);
             }
         </script>
     </body>

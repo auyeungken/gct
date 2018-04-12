@@ -1,8 +1,4 @@
 <html>
-    <head>
-        <script src="contract/GCToken.js"></script>
-        <script src="contract/GCTCrowdsale.js"></script>
-    </head>
     <body>
         <table>
             <tr>
@@ -23,11 +19,13 @@
                     </ol>
                 </td>
             </tr>
+            <!--
             <tr>
                 <td>
                     Gas Price in Gwei <input type="text" id="gasprice" value="1" onkeyup="$('#gasWeiAmt').html(convertToWei($(this).val(),'9').toString())"/> (Wei : <span id="gasWeiAmt"></span>)
                 </td>
             </tr>
+        -->
             <tr>
                 <td><input type="button" value="Deploy GCT" onclick="deploygct()"/></td>
                 <td><span id='gctaddress'></span></td>
@@ -45,8 +43,9 @@
                 <td><div id='deployout'></div></td>
             </tr>
         </table>
+        <input type="hidden" id="gasprice" value="0"/> <!-- just a placement, it should use metamask input -->
         <script>
-             $('#keysection').load('component/key.html');
+            // $('#keysection').load('component/key.html');
 
             function deploygct(){
                 deployContract(getPrivateKey(),GCToken,$("#gasprice").val(),[], $('#deployout')); 
@@ -59,9 +58,9 @@
                 }
                 f = function(receipt){
                     let pkey = getPrivateKey();
-                    let account = web3.eth.accounts.wallet.add(pkey);
+                    //let account = web3js.eth.accounts.wallet.add(pkey);
                     contractUtils.setContractVal(pkey,GCToken,"100000",$("#gasprice").val(),false,"0",'setCrowdsaleAccount',$('#deployout'),receipt.contractAddress);
-                    web3.eth.accounts.wallet.remove(account.address);
+                    //web3js.eth.accounts.wallet.remove(account.address);
                 };
                 deployContract(getPrivateKey(),GCTCrowdsale,$("#gasprice").val(),[gct], $('#deployout'),f);
             }
@@ -70,13 +69,18 @@
                 let gas = contractObj.estimateGas;
                 let abi = contractObj.abi;
                 let data = contractObj.data;
+                web3.eth.getAccounts(function(error, accounts) {
+                    console.log("Get Accounts : ", accounts[0]);
+                    console.log("Account : ",  web3js.eth.accounts[0]);
+                });
 
                 display.append("<h1>Deploy Status - "+contractObj.name+"</h1>");
-                let account = web3.eth.accounts.wallet.add(getPrivateKey());
-                var myContract = new web3.eth.Contract(abi,{
-                    from: account.address,
-                    gasPrice: gasprice,
-                    gas: gas,
+               // let account = web3js.eth.accounts.wallet.add(getPrivateKey());
+                var myContract = new web3js.eth.Contract(abi,{
+                    from: web3.eth.defaultAccount,
+                    //gasPrice: gasprice,
+                   // gas: gas,
+                    gasPrice: '3000000000', // 3 Gwei
                     data: data,
                 });
 
@@ -100,7 +104,7 @@
                     display.append("<br/><h3 style='color:red'>Contract Address: "+newContractInstance.options.address + "</h3>") // instance with the new contract address
                 });
                 
-                web3.eth.accounts.wallet.remove(account.address);
+               // web3js.eth.accounts.wallet.remove(account.address);
                 return obj;
             }
         </script>

@@ -1,6 +1,11 @@
 <html>
     <head>
         <meta charset="UTF-8"> 
+        <meta http-equiv="pragma" content="no-cache" />
+        <meta http-equiv="cache-control" content="no-cache" />
+        <META HTTP-EQUIV="EXPIRES" CONTENT="0">
+        <META HTTP-EQUIV="EXPIRES" CONTENT="Mon, 22 Jul 2002 11:12:01 GMT">
+
         <!-- aes from https://github.com/mdp/gibberish-aes echo "U2FsdGVkX1+21O5RB08bavFTq7Yq/gChmXrO3f00tvJaT55A5pPvqw0zFVnHSW1o" | openssl enc -d -aes-256-cbc -a -k password -md md5 -->
         <script type="text/javascript" src="js/aes.js"></script>
         <script type="text/javascript" src="js/web3.min.js"></script>
@@ -12,10 +17,41 @@
         <script type="text/javascript" src="contract/GCToken.js"></script>
         <script type="text/javascript" src="contract/GCTCrowdsale.js"></script>
         <script>
+            var gctContractAddr = '0x3F697A1150D200baDc8078175364dc2aD03F7093';
+            var crowdsaleContractAddr = '0x16125EB73b0ba6faF7c7F6eF42751a44abCdd77E';
+            
+
             GibberishAES.size(256);
             var random = KISS07();
-            var web3 = new Web3("http://localhost:8545");
+            //var web3 = new Web3(Web3.currentProvider);// new Web3("http://192.168.0.136:8545");
 
+            var selectedAcct;
+            window.addEventListener('load', function() {
+                // Checking if Web3 has been injected by the browser (Mist/MetaMask)
+                if (typeof web3 !== 'undefined') {
+                    // Use Mist/MetaMask's provider
+                    web3js = new Web3(web3.currentProvider);
+                    selectedAcct = web3.eth.defaultAccount;
+                    var accountInterval = setInterval(function() {
+                        if (web3.eth.defaultAccount !== selectedAcct) {
+                            selectedAcct = web3.eth.defaultAccount;
+                            updateAcctInfo(true);
+                        }
+                    }, 1000);
+                    updateAcctInfo();
+                } else {
+                    console.log('No web3? You should consider trying MetaMask!')
+                    alert("Ensure you have installed Metamask");
+                    // fallback - use your fallback strategy (local node / hosted node + in-dapp id mgmt / fail)
+                    //web3js = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
+                }
+            });
+
+            function updateAcctInfo(blink=false){
+                let o = $('#accountInfo');
+                o.html('Active Account - <span class="'+(blink?'blinking':'')+'" style="color:blue">' + selectedAcct + '</span>');
+            }
+            
             function rand(min,max){
                 var n = max - min + 1;
                 return Math.floor(random() * n) + min;
@@ -33,12 +69,12 @@
             }
 
             function contractAt(addr, abi){
-                return web3.eth.contract(abi).at(addr);
+                return web3js.eth.contract(abi).at(addr);
             }
 
             async function getBalance(addr, raw){
                 if(addr.trim()==='')return NaN;
-                let v = new BigNumber(await web3.eth.getBalance(addr));
+                let v = new BigNumber(await web3js.eth.getBalance(addr));
                 if(!raw) v = v.div("1e+18");
                 return v;
             }
@@ -56,15 +92,18 @@
                 return NaN;
             }
             function getPrivateKey(){
+                /*
                 let obj = $("#privateKeySec");
                 let pkey = obj.find("#privatekey").val();
                 if(pkey.trim() === ""){
                     pkey = GibberishAES.dec(obj.find("#encprivatekey").val(), obj.find("#password").val());
                 }
                 return pkey;
+                */
+               return undefined; // it should be using metamask as source of account management
             }
             async function loadAcctInfo(){
-                let acct = web3.eth.accounts.privateKeyToAccount(getPrivateKey());
+                let acct = web3js.eth.accounts.privateKeyToAccount(getPrivateKey());
                 let bal = await getBalance(acct.address);
                 let obj = $("#privateKeySec");
                 obj.find('#sendaddress').html(acct.address);
@@ -81,17 +120,33 @@
             .important {
                 color:red;
             }
+
+            .blinking{
+                animation:blinkingText 0.8s 5;
+            }
+            @keyframes blinkingText{
+                0%{     color: red;    }
+                49%{    color: transparent; }
+                50%{    color: transparent; }
+                99%{    color: transparent;  }
+                100%{   color: blue;    }
+            }
         </style>
     </head>
     <body>
         <table style="width:100%">
             <tr>
                 <td>
-                    <input type="button" onclick="loadPage('createacct.html')" value="Create Account">
-                    <input type="button" onclick="loadPage('transfer.html')" value="Transaction">
-                    <input type="button" onclick="loadPage('gct.html')" value="GCT">
-                    <input type="button" onclick="loadPage('crowdsale.html')" value="Crowdsale">
-                    <input type="button" onclick="loadPage('deploy.html')" value="Deploy">
+                    <div style='width:100%;position: fixed;top:0;background-color:aaa'>                    
+                        <!--
+                        <input type="button" onclick="loadPage('createacct.html')" value="Create Account">
+                        <input type="button" onclick="loadPage('transfer.html')" value="Transaction">
+                        -->
+                        <input type="button" onclick="loadPage('gct.html')" value="GCT">
+                        <input type="button" onclick="loadPage('crowdsale.html')" value="Crowdsale">
+                        <input type="button" onclick="loadPage('deploy.html')" value="Deploy">
+                        <div id='accountInfo' style='float:right;padding-right:100px'></div>
+                    </div>
                 </td>
             </tr>
             <tr>

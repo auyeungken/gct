@@ -7,21 +7,16 @@
             <tr>
                 <td colspan="2">
                     <div id="keysection"></div>
-                </td>
+                </td>  
             </tr>
             <tr>
                 <td colspan="2"><hr/></td>
             </tr>
             <tr>
                 <td>                    
-                    Contract Address : <input type="text" id='txtgctaddress' value="0xE2EB199C90810367E96CB8c666C2fB30Bd04133C"/>
+                    Contract Address : <input type="text" id='txtgctaddress' value=""/>
                     <input type="button" value="Load Contract" onclick="loadContract()"/>
                 </td>                
-            </tr>
-            <tr>
-                <td>
-                    Gas Price in Gwei <input type="text" id="gasprice" value="1" onkeyup="$('#gasWeiAmt').html(convertToWei($(this).val(),'9').toString())"/> (Wei : <span id="gasWeiAmt"></span>)
-                </td>
             </tr>
             <tr>
                 <td colspan="2"><hr/></td>
@@ -31,6 +26,13 @@
                     <fieldset>
                         <legend><h3>GCT Operation</h3></legend>
                         <table border="1">
+                            <!--<tr>
+                                <td colspan="2">
+                                    Gas Price in Gwei <input type="text" id="gasprice" value="1" onkeyup="$('#gasWeiAmt').html(convertToWei($(this).val(),'9').toString())"/> (Wei : <span id="gasWeiAmt"></span>)
+                                    <br/>
+                                    <br/>
+                                </td>
+                            </tr>-->
                             <tr>
                                 <td>Set Crowdsale Contract Address<br/>(Only Contract Owner)</td>
                                 <td>
@@ -40,10 +42,10 @@
                                                 <td class="require">Address</td>
                                                 <td><input type="text" name="param"/></td>
                                             </tr>
-                                            <tr>
+                                            <!-- <tr>
                                                 <td>Gas</td>
-                                                <td><input type="text" name="gas"/></td>
-                                            </tr>
+                                                <td><input type="text" name="gas" value="1000000"/></td>
+                                            </tr>-->  
                                             <tr>
                                                 <td colspan="2">
                                                     <input type="button" value="Estimate Gas" onclick="contractUtils.sendValue('setCrowdsaleAccount',this,true,GCToken)"/>
@@ -71,16 +73,16 @@
                                             </tr>
                                             <tr>
                                                 <td class="require">Token Amount</td>
-                                                <td><input type="text" name="param"/></td>
+                                                <td><input type="text" id='pstokenamt'/><input type="hidden" name="param"/></td>
                                             </tr>
-                                            <tr>
+                                            <!-- <tr>
                                                 <td>Gas</td>
-                                                <td><input type="text" name="gas"/></td>
-                                            </tr>
+                                                <td><input type="text" name="gas" value="1000000"/></td>
+                                            </tr>-->  
                                             <tr>
                                                 <td colspan="2">
-                                                    <input type="button" value="Estimate Gas" onclick="contractUtils.sendValue('privateSaleTransfer',this,true,GCToken)"/>
-                                                    <input type="button" value="Send" onclick="contractUtils.sendValue('privateSaleTransfer',this,false,GCToken)"/>
+                                                    <input type="button" value="Estimate Gas" onclick="pstransfer(this,true)"/>
+                                                    <input type="button" value="Send" onclick="pstransfer(this,false)"/>
                                                 </td>
                                             </tr>
                                             <tr>
@@ -97,7 +99,7 @@
                     </fieldset>
                     <fieldset>
                         <legend><h3>Get GCT Info - <input type="button" value="Load Contract" onclick="loadContract()"/></h3></legend>
-                        <table>
+                        <table border="1">
                             <tr>
                                 <td>Contract Owner</td>
                                 <td><span id='txtowner'></span></td>
@@ -119,7 +121,7 @@
                                 <td><span id='txtcap'></span></td>
                             </tr>
                             <tr>
-                                <td>Total Token Supply</td>
+                                <td>Minted Token</td>
                                 <td><span id='txttotalSupply'></span></td>
                             </tr>
                             <tr>
@@ -128,7 +130,7 @@
                             </tr>
                             <tr>
                                 <td>Token Balance<br/>&nbsp;</td>
-                                <td><input type='text' id='tokenbalance'><input type='button' value='Get' onclick="contractUtils.getVal(getPrivateKey(), GCToken,'balanceOf',$('#txtbalanceOf'),$('#tokenbalance').val(),undefined,'1e+8')"/><br/>GCT <span id='txtbalanceOf'></span></td>
+                                <td><input type='text' id='tokenbalance'><input type='button' value='Get' onclick="contractUtils.getVal(getPrivateKey(), GCToken,'balanceOf',$('#txtbalanceOf'),$('#tokenbalance').val(),'1e+8')"/><br/>GCT <span id='txtbalanceOf'></span></td>
                             </tr>
                             <tr>
                                 <td>crowdsaleAccount</td>
@@ -152,7 +154,7 @@
                             </tr>
                             <tr>
                                 <td>Private Sale Invested<br/>(only Owner or PrivateSale Account)</td>
-                                <td><input type='text' id='privatesaleinvested'><input type='button' value='Get' onclick="contractUtils.getVal(getPrivateKey(), GCToken,'getPrivateSaleInvested', $('#txtgetPrivateSaleInvested'),$('#privatesaleinvested').val(),undefined,'1e+8')"/><br/>GCT <span id='txtgetPrivateSaleInvested'></span></td>
+                                <td><input type='text' id='privatesaleinvested'><input type='button' value='Get' onclick="contractUtils.getVal(getPrivateKey(), GCToken,'getPrivateSaleInvested', $('#txtgetPrivateSaleInvested'),$('#privatesaleinvested').val(),'1e+8')"/><br/>GCT <span id='txtgetPrivateSaleInvested'></span></td>
                             </tr>
                         </table>
                     </fieldset>
@@ -160,7 +162,9 @@
             </tr>
         </table>
         <script>
-            $('#keysection').load('component/key.html');
+            //$('#keysection').load('component/key.html');
+            $('#txtgctaddress').val(gctContractAddr);
+
             function loadContract (){
                 let arr = ['owner', 'name','symbol','decimals','icoEndTime','crowdsaleAccount','hasInit','privateSaleAccount','privateSaleReleaseTime'];
                 
@@ -175,6 +179,14 @@
                 arr.forEach(function(currentValue, index, arr){
                     contractUtils.getVal(getPrivateKey(), GCToken,currentValue,$('#txt'+currentValue),undefined,decimals);
                 });
+            }
+
+            function pstransfer(obj,isEstimate){
+                let o = $('#pstokenamt');
+                let ex = new BigNumber(o.val()).times(new BigNumber('1e08'));
+                o.parent().find('input[name="param"]').val(ex.toString());
+                console.log("Token Amt:", ex.toString());
+                contractUtils.sendValue('privateSaleTransfer',obj,isEstimate,GCToken)
             }
         </script>
     </body>

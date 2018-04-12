@@ -1,9 +1,10 @@
 const contractUtils = {
     debug:true,
     setContractVal: function (pkey,contractObj,gas,gasprice,estimateOnly,ether,functionName,display,...params){
-        let account = web3.eth.accounts.wallet.add(getPrivateKey());
-        let contract = new web3.eth.Contract(contractObj.abi, $('#txtgctaddress').val());
-        contract.options.from = account.address;
+        let acctAddress = web3.eth.defaultAccount;
+        //let account = web3js.eth.accounts.wallet.add(pkey);
+        let contract = new web3js.eth.Contract(contractObj.abi, $('#txtgctaddress').val());
+        contract.options.from = acctAddress;// account.address;
        
         if(gas==='')gas = '1000000';
         if(estimateOnly){
@@ -29,25 +30,25 @@ const contractUtils = {
         
         let fStr = "contract.methods."+functionName+"("+paramStr+")";
         
-        if(contractUtils.debug)console.log("Call Set("+fStr+") : ", '=>From:',account.address, '=>ether:', ether, '=> Gas:', gas, '=> GasPrice:', gasprice);
+        if(contractUtils.debug)console.log("Call Set("+fStr+") : ", '=>From:',acctAddress, '=>wei:', ether.toString(), '=> Gas:', gas, '=> GasPrice:', gasprice);
         let f = eval(fStr);
-        
-        
+
         f.estimateGas({
-            from: account.address,
+            from: acctAddress, //account.address,
             gas: gas,
-            value: ether,
+            value: ether.toString(),
         }).then(function(gasAmount){
             if(display)display.append("<br/>- Estimate Gas("+functionName+") : ", gasAmount);
-            if(!estimateOnly){
+            if(!estimateOnly){                
                 if(new BigNumber(gas).lt(gasAmount)){
                     if(display)display.append("<br/>- Insufficient Gas("+functionName+") at least " + gasAmount + " gas");
                 }else{
+                    if(display)display.append("<br/><h3 style='color:red'>Check Metamask to approve</h3>");
                     f.send({
-                        from: account.address,
-                        gasPrice: gasprice,
-                        gas: gas,
-                        value: ether,
+                        from: acctAddress, //account.address,
+                        gasPrice: '3000000000', // 3 Gwei
+                        gas: new BigNumber(gasAmount).times(1.2).dp(0).toFixed(),
+                        value: ether.toString(),
                     }).then(function(r){
                         if(contractUtils.debug)console.log("Success("+functionName+"):",r);
                         if(display)display.append("<br/>- Success Processing("+functionName+")<br/>Transaction:"+r.transactionHash+",<br/>Block Number:" + r.blockNumber + "<br/>Gas Used:"+r.gasUsed);
@@ -56,17 +57,18 @@ const contractUtils = {
                     });
                 }
             }
-            web3.eth.accounts.wallet.remove(account.address);
+           // web3js.eth.accounts.wallet.remove(account.address);
         })
         .catch(function(error){
-            if(display)display.append("<br/>- Error Estimate Processing("+functionName+"):" + error);                    
-            web3.eth.accounts.wallet.remove(account.address);
+            if(display)display.append("<br/>- Error Estimate Processing("+functionName+"):" + error); 
+            //web3js.eth.accounts.wallet.remove(account.address);
         });
     },
     getContractVal:function (pkey, contractObj, functionName,...params){
-        let account = web3.eth.accounts.wallet.add(getPrivateKey());
-        let contract = new web3.eth.Contract(contractObj.abi, $('#txtgctaddress').val());
-        contract.options.from = account.address;
+        let acctAddress = web3.eth.defaultAccount;
+        //let account = web3js.eth.accounts.wallet.add(pkey);
+        let contract = new web3js.eth.Contract(contractObj.abi, $('#txtgctaddress').val());
+        contract.options.from = acctAddress;// account.address;
 
         if(params.length===1 && !params[0])params = [];        
         let callF = "contract.methods."+functionName+"("+(params.length>0?"params":"")+")";
@@ -75,7 +77,7 @@ const contractUtils = {
         if(params.length>0) f.arguments = params;
 
         let result = f.call();
-        web3.eth.accounts.wallet.remove(account.address);
+        //web3js.eth.accounts.wallet.remove(account.address);
         return result;
     },
     getVal: function(pkey, contractObj, name,display,param,decimals){
@@ -121,8 +123,8 @@ const contractUtils = {
         let arr = pObj.find("input[name='param']").each(function(index,elm){
             param.push($(elm).val());
         });
-        let gas = pObj.find("input[name='gas']").val();
-        let gasprice = convertToWei($('#gasprice').val(),'9');
+        let gas = "";// pObj.find("input[name='gas']").val();
+        let gasprice = "";// convertToWei($('#gasprice').val(),'9');
         let display = pObj.find("span[name='result']");
         let ether = pObj.find("input[name='ether']").val();
 

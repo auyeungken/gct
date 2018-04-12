@@ -51,9 +51,9 @@
                 <td><input id='txbutton' type="button" value="Transfer" onclick="transfer()"/></td>
             </tr>
         </table>
-        <script type='text/javascript'>           
-            $('#keysection').load('component/key.html');
-
+        <script type='text/javascript'>                    
+            //$('#keysection').load('component/key.html');
+            
             async function transfer(){
                 let amt = $('#amount').val();
                 let toAddr = $('#toaddress').val();
@@ -74,10 +74,10 @@
                     $('#txbutton').attr("disabled", true);
                     let pkey = getPrivateKey();
                    
-                    
-                    let account = web3.eth.accounts.wallet.add(pkey);
+                    let acctAddress = web3.eth.defaultAccount;
+                    //let account = web3js.eth.accounts.wallet.add(pkey);
                     let wei = convertToWei(amt);
-                    let acctBal = await getBalance(account.address,true);
+                    let acctBal = await getBalance(acctAddress,true);//await getBalance(account.address,true);
                     
                     if(acctBal.lte(wei)){
                         alert("Insufficient Fund, only have " + acctBal.div("1e+18") + " ETH");
@@ -86,7 +86,7 @@
                     }
     
                     transactionObject = {
-                        from:account.address,
+                        from: acctAddress, //account.address,
                         to: toAddr,
                         value: wei,
                         gasPrice: convertToWei(gprice,"9"),
@@ -94,7 +94,7 @@
                     };
 
                     $("#status").html("Pending Process");
-                    await web3.eth.sendTransaction( transactionObject).then(function (r){
+                    await web3js.eth.sendTransaction( transactionObject).then(function (r){
                         let str = "transactionHash: " + r.transactionHash + "<br/>";
                         str+= "blockNumber: "+r.blockNumber + "<br/>";
                         str+= "gasUsed: " + r.gasUsed + "<br/><br/>";
@@ -106,11 +106,9 @@
                         $("#status").html("Error:"+e);
                         $('#txbutton').attr("disabled", false);
                     });
-                    web3.eth.accounts.wallet.remove(account.address);
+                    //web3js.eth.accounts.wallet.remove(account.address);
                 }
             }
-
-            
         </script>
     </body>
 </html>
