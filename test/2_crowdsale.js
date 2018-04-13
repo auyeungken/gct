@@ -63,7 +63,7 @@ contract('GCTCrowdsale Test', function(accounts) {
 
     it("Calculate variable should match",async function(){
         let _usdPerEther = (await crowd.usdPerEther()).toNumber();
-        let _weiPerToken = (await crowd.weiPerToken()).toNumber();
+        let _weiPerToken = (await crowd.weiPerGCT()).toNumber();
         let _minPurchaseWei = (await crowd.minPurchaseWei()).toNumber();
 
         assert.equal(_usdPerEther.toString(), usdPerEther.toString(), "usdPerEther not match");

@@ -26,7 +26,7 @@ function isVMErr(msg){
     return msg.includes('VM Exception');
 }
 
-var purchaseAmt = "1E+21";
+var purchaseAmt = "999999999999993600"; // this amount ensure no refund happen during purchase (This needs change if exchange rate not 400USD)
 var arrayAcct = [config.testAccount1,config.testAccount2,config.testAccount3];
 
 contract('GCTCrowdsale Refund Test', function(accounts) {
@@ -51,6 +51,7 @@ contract('GCTCrowdsale Refund Test', function(accounts) {
             let beforeWeiRaisedBig = await crowd.weiRaised();
             let r = await crowd.sendTransaction({from:buyFromAccount, value:weiBuyAmount});
             let gasAmtInWei = r.receipt.gasUsed;
+            console.log("Gas Used:", gasAmtInWei);
             
             // need add the gas price to calculate the actual used wei for token purchase
             let afterAcctBalBig = await web3.eth.getBalance(buyFromAccount).add(new BigNumber(gasAmtInWei));
@@ -118,7 +119,7 @@ contract('GCTCrowdsale Refund Test', function(accounts) {
         let weiRaised = await crowd.weiRaised();
 
         for(var i=0;i < arrayAcct.length; i++){
-            console.log("Invested:", arrayAcct[i], await crowd.investedSum.call(arrayAcct[i]));
+            console.log("Invested:", arrayAcct[i], (await crowd.investedSum.call(arrayAcct[i])).toString());
         }
         console.log("Contract Bal:",contractBal.toString(), ", Refunded:",refundedAmt.toString(), ", Wei Raised:",weiRaised.toString());
     });

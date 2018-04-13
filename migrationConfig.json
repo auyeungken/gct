@@ -1,17 +1,17 @@
 {    
     "icoEndinMinute"      : 5,
     
-    "ownerAccount"        : "0xDec09d5fA0C8bA2680792a592E5133E374e13609",
-    "walletAddress"       : "0x8dfA3afF0Da3a7c1703Ad7f14dAb371b8e6F132e",
-    "admin"               : "0xA48890b1798E0AF6bbB2F7aB3eB2446Efd125bAD",
-    "companyAccount"      : "0x1fB49bd6Fd5AfcB70Ef579d2d84B354a0f3e1d79",
-    "privateSaleAccount"  : "0x7624EAe92208E03578deBAa7cDff635860c7F47C",
-    "teamAccount"         : "0xEe00CEDc786Aa344182b02a5FB66D3D357F7e864",
-    "promotionAccount"    : "0x61412EdDEf6373c9E14Ba66d3F764F00F6eB2a28",
+    "ownerAccount"        : "0x452ABab9d7C079529f24b5dD0A93c1c858a03d56",
+    "walletAddress"       : "0x452ABab9d7C079529f24b5dD0A93c1c858a03d56",
+    "admin"               : "0x80e2afe33144ee746ac4dcEdCF5D788A4692feBB",
+    "companyAccount"      : "0x29FB4d844B996ce31E3B12D4348AD168abe4AE1c",
+    "privateSaleAccount"  : "0x227F269Db91111D7c7f5e42bc8960C3A0391E217",
+    "teamAccount"         : "0x3c3ec1ed78afB52aC1C4BE901D064E2C8AeA3C6f",
+    "promotionAccount"    : "0xc19340a9F7E883355f150D3d4955c8AEBc5C64f5",
 
-    "testAccount1"         : "0x7b5cC7895a03B99AF0c4D1D2f023209157109df7",
-    "testAccount2"        : "0x55c6885ec95D3753DBf069812C40142a13Ec2Ce7",
-    "testAccount3"        : "0x9Af32A8087a1cc8afB5D2B0D7Dab358Cbd677564",
+    "testAccount1"        : "0x5451A1fe6e21a6A224007BEc9B1A371346fD8008",
+    "testAccount2"        : "0xe6311f4041Ed8273FFE0bb47aEcd32a5B90135E7",
+    "testAccount3"        : "0xe0ebD3ab6eac30E4A5f5d5D8B8E6CcECA683daF5",
     "cap"                 : 2000000000000000000
 }
  

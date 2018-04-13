@@ -25,7 +25,7 @@ const contractUtils = {
         if($.isNumeric(ether)){
             ether = convertToWei(ether,'18');
         }else{
-            ether = "0";
+            ether =  new BigNumber(0);
         }
         
         let fStr = "contract.methods."+functionName+"("+paramStr+")";
@@ -36,7 +36,7 @@ const contractUtils = {
         f.estimateGas({
             from: acctAddress, //account.address,
             gas: gas,
-            value: ether.toString(),
+            value: ether,
         }).then(function(gasAmount){
             if(display)display.append("<br/>- Estimate Gas("+functionName+") : ", gasAmount);
             if(!estimateOnly){                
@@ -48,7 +48,7 @@ const contractUtils = {
                         from: acctAddress, //account.address,
                         gasPrice: '3000000000', // 3 Gwei
                         gas: new BigNumber(gasAmount).times(1.2).dp(0).toFixed(),
-                        value: ether.toString(),
+                        value: ether,
                     }).then(function(r){
                         if(contractUtils.debug)console.log("Success("+functionName+"):",r);
                         if(display)display.append("<br/>- Success Processing("+functionName+")<br/>Transaction:"+r.transactionHash+",<br/>Block Number:" + r.blockNumber + "<br/>Gas Used:"+r.gasUsed);

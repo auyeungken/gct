@@ -58,10 +58,10 @@ contract GCTCrowdsale is AccountAddress, Pausable, Whitelist {
     * @param purchaser who paid for the tokens
     * @param beneficiary who got the tokens
     * @param value weis paid for purchase
-    * @param amount amount of tokens purchased
+    * @param token amount of tokens purchased
     */
-    event TokenPurchase(address indexed purchaser, address indexed beneficiary, uint256 value, uint256 amount);
-    event Refund(address indexed holder, uint256 etherAmount);
+    event TokenPurchase(address indexed purchaser, address indexed beneficiary, uint256 value, uint256 token);
+    event Refund(address indexed holder, uint256 weiAmount);
 
     uint8 constant public decimals = 8;
     
@@ -86,14 +86,8 @@ contract GCTCrowdsale is AccountAddress, Pausable, Whitelist {
     // minimum purchase wei amount
     uint public minPurchaseWei; 
     
-    // private sale account lockout from end of ICO
-    uint constant public PRIVATE_TRANSFER_LOCKOUT = 90 days;
-
     // when exceed this amount of token if account conducted in private sale, additional transfer restriction applies
-    uint constant public PRIVATE_INVEST_LOCK_TOKEN =  20000000e8;
-
-    // company reseved release minutes
-    uint constant public COMPANY_RESERVE_FOR = 182 days; // this equivalent to 6 months
+    uint constant public PRIVATE_INVEST_LOCK_TOKEN = 20000000e8;
 
     //Total wei sum an address has invested
     mapping(address => uint) public investedSum;
@@ -127,6 +121,12 @@ contract GCTCrowdsale is AccountAddress, Pausable, Whitelist {
 
     // wei already refund
     uint public refundedWei;
+
+    // private sale account lockout from end of ICO
+    uint constant public PRIVATE_TRANSFER_LOCKOUT = 90 days;
+
+    // company reseved release minutes
+    uint constant public COMPANY_RESERVE_FOR = 182 days; // this equivalent to 6 months
     
     // team can start claiming tokens N days after ICO
     uint constant public TEAM_CAN_CLAIM_AFTER = 120 days;// this equivalent to 4 months
@@ -142,7 +142,6 @@ contract GCTCrowdsale is AccountAddress, Pausable, Whitelist {
 
     // token can be purchase each for each crowdsale stage
     uint[] public stageTokenSupply = [900000000e8, 934615384e8, 1296000000e8, 1687500000e8, 1840909092e8];
-    //uint[] public stageBonusSupply = [31500000000000000, 28038000000000000,  32400000000000000,  33750000000000000,  18409272700000000];
     
     // amount of token minted for each stage
     uint[5] public stageBonusAllocated;
@@ -150,7 +149,6 @@ contract GCTCrowdsale is AccountAddress, Pausable, Whitelist {
     // bonus % for each stage (35 means 35%)
     uint[] public bonusRate = [35, 30, 25, 20, 10];    
     
-
     /**
     * @param _token Address of the token being sold
     */
@@ -255,35 +253,40 @@ contract GCTCrowdsale is AccountAddress, Pausable, Whitelist {
     /**
     * @param _beneficiary Address performing the token purchase
     */
-    function buyTokens(address _beneficiary) public isWhitelisted(_beneficiary) whenNotPaused payable {
-        require(!crowdsaleClosed);
-        require(_beneficiary != address(0));
+    function buyTokens(address _beneficiary) public payable {        
         require(msg.value >= minPurchaseWei);
-        require(crowdsaleMinted < CROWDSALE_SUPPLY);
-
-        uint weiAmount = msg.value;
-        uint tokenSold;
-        uint refundWei;
-
-        // calculate token amount to be created
-        (tokenSold, refundWei) = _getTokenAmount(weiAmount);
-
-        weiAmount = weiAmount.sub(refundWei);
-        _processPurchase(_beneficiary, tokenSold, weiAmount);
         
-        // update state
-        usdRaised = usdRaised.add(weiAmount.mul(usdPerEther));
-        weiRaised = weiRaised.add(weiAmount);
+        uint refundWei = _purchase(_beneficiary,msg.value);
         
         // refund the wei that was not enough to purchase 1 GCT
         if (refundWei > 0){
             _beneficiary.transfer(refundWei);
             emit Refund(msg.sender, refundWei);
         }
-        _forwardFunds();        
-        emit TokenPurchase(msg.sender, _beneficiary, weiAmount, tokenSold);
+        _forwardFunds();
     }
 
+    function _purchase(address _beneficiary, uint _weiAmount) internal isWhitelisted(_beneficiary) whenNotPaused returns (uint) {
+        require(!crowdsaleClosed);
+        require(_beneficiary != address(0));
+        require(crowdsaleMinted < CROWDSALE_SUPPLY);
+
+        uint tokenSold;
+        uint refundWei;
+
+        // calculate token amount to be created
+        (tokenSold, refundWei) = _getTokenAmount(_weiAmount);
+
+        uint actualWeiAmount = _weiAmount.sub(refundWei);
+        _processPurchase(_beneficiary, tokenSold, actualWeiAmount);
+        
+        // update state
+        usdRaised = usdRaised.add(actualWeiAmount.mul(usdPerEther));
+        weiRaised = weiRaised.add(actualWeiAmount);
+        emit TokenPurchase(msg.sender, _beneficiary, actualWeiAmount, tokenSold);
+
+        return refundWei;
+    }
 
     /**
     * @dev Ether is converted to tokens.
@@ -292,9 +295,10 @@ contract GCTCrowdsale is AccountAddress, Pausable, Whitelist {
     * @return Amount of wei refund to beneficiary 
     */
     function _getTokenAmount(uint256 _weiAmount) internal returns (uint256,uint256) {
-        uint buyTokenAmount = _weiAmount.div(weiPerGCT).mul(10 ** uint(decimals));
+        //uint buyTokenAmount = _weiAmount.div(weiPerGCT).mul(10 ** uint(decimals));
+        uint buyTokenAmount = _weiAmount.mul(10 ** uint(decimals)).div(weiPerGCT);
         uint actualSoldTokens;
-        uint actualBonusToken;
+        uint actualBonusTokens;
         
         for (; currentStage < 5;){
             // calcuate the amount of token each stage can supply
@@ -319,13 +323,15 @@ contract GCTCrowdsale is AccountAddress, Pausable, Whitelist {
 
             // update total purchased token
             actualSoldTokens = actualSoldTokens.add(stageToken);
-            actualBonusToken = actualBonusToken.add(stageBonus);             
+            actualBonusTokens = actualBonusTokens.add(stageBonus);
+            
             if(buyTokenAmount == 0){
                 break;
             }
         }
 
-        return (actualSoldTokens.add(actualBonusToken), _weiAmount.sub(actualSoldTokens.div(10 ** uint(decimals)).mul(weiPerGCT)));
+        //return (actualSoldTokens.add(actualBonusTokens), _weiAmount.sub(actualSoldTokens.div(10 ** uint(decimals)).mul(weiPerGCT)));
+        return (actualSoldTokens.add(actualBonusTokens), _weiAmount.sub(actualSoldTokens.mul(weiPerGCT).div(10 ** uint(decimals))));
     }
     
     /**

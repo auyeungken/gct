@@ -2,26 +2,10 @@ pragma solidity ^0.4.21;
 
 contract AccountAddress {
     // Address where funds are collected
-    /*address constant public WALLET = 0x8dfA3afF0Da3a7c1703Ad7f14dAb371b8e6F132e;
-    address constant public ADMIN_ACCOUNT = 0xA48890b1798E0AF6bbB2F7aB3eB2446Efd125bAD;
-    address constant public COMPANY_ACCOUNT = 0x1fB49bd6Fd5AfcB70Ef579d2d84B354a0f3e1d79;
-    address constant public PRIVATE_SALE_ACCOUNT = 0x7624EAe92208E03578deBAa7cDff635860c7F47C;
-    address constant public TEAM_ACCOUNT = 0xEe00CEDc786Aa344182b02a5FB66D3D357F7e864;
-    address constant public PROMOTION_ACCOUNT = 0x61412EdDEf6373c9E14Ba66d3F764F00F6eB2a28;*/
-
-        /*address constant public WALLET = 0xDec09d5fA0C8bA2680792a592E5133E374e13609;
-    address constant public ADMIN_ACCOUNT = 0xDec09d5fA0C8bA2680792a592E5133E374e13609;
-    address constant public COMPANY_ACCOUNT = 0xDec09d5fA0C8bA2680792a592E5133E374e13609;
-    address constant public PRIVATE_SALE_ACCOUNT = 0xDec09d5fA0C8bA2680792a592E5133E374e13609;
-    address constant public TEAM_ACCOUNT = 0xDec09d5fA0C8bA2680792a592E5133E374e13609;
-    address constant public PROMOTION_ACCOUNT = 0xDec09d5fA0C8bA2680792a592E5133E374e13609;*/
-
-    address constant public WALLET = 0x8c78126e4385D6D882CD89Ce848444e478820a89;
-    address constant public ADMIN_ACCOUNT = 0x8c78126e4385D6D882CD89Ce848444e478820a89;
-    address constant public COMPANY_ACCOUNT = 0x8c78126e4385D6D882CD89Ce848444e478820a89;
-    address constant public PRIVATE_SALE_ACCOUNT = 0x8c78126e4385D6D882CD89Ce848444e478820a89;
-    address constant public TEAM_ACCOUNT = 0x8c78126e4385D6D882CD89Ce848444e478820a89;
-    address constant public PROMOTION_ACCOUNT = 0x8c78126e4385D6D882CD89Ce848444e478820a89;
-    
-
+    address constant public WALLET = 0x452ABab9d7C079529f24b5dD0A93c1c858a03d56;
+    address constant public ADMIN_ACCOUNT = 0x80e2afe33144ee746ac4dcEdCF5D788A4692feBB;
+    address constant public COMPANY_ACCOUNT = 0x29FB4d844B996ce31E3B12D4348AD168abe4AE1c;
+    address constant public PRIVATE_SALE_ACCOUNT = 0x227F269Db91111D7c7f5e42bc8960C3A0391E217;
+    address constant public TEAM_ACCOUNT = 0x3c3ec1ed78afB52aC1C4BE901D064E2C8AeA3C6f;
+    address constant public PROMOTION_ACCOUNT = 0xc19340a9F7E883355f150D3d4955c8AEBc5C64f5;
 }
