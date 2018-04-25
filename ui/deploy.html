@@ -27,15 +27,12 @@
             </tr>
         -->
             <tr>
-                <td><input type="button" value="Deploy GCT" onclick="deploygct()"/></td>
-                <td><span id='gctaddress'></span></td>
-            </tr>
-            <tr>
                 <td>
-                    <input type="button" value="Deploy Crowdsale" onclick="deploycrowd()"/>
-                    GCT Address : <input type="text" id='txtgctaddress' value=""/>
+                    <input type="button" value="Deploy GCT" onclick="deploygct()"/>
+                    ICO Endtime : <input type="text" id='txtIcoEndtime' value=""/>
                 </td>
-            </tr>
+                <td><span id='gctaddress'></span></td>
+            </tr>           
             <tr>
                 <td colspan="2"><hr/></td>
             </tr>
@@ -48,22 +45,13 @@
             // $('#keysection').load('component/key.html');
 
             function deploygct(){
-                deployContract(getPrivateKey(),GCToken,$("#gasprice").val(),[], $('#deployout')); 
-            }
-            function deploycrowd(){
-                let gct = $('#txtgctaddress').val().trim();
-                if(gct===''){
-                    alert('Missing gct address');
+                let icoEndtime = $('#txtIcoEndtime').val().trim();
+                if(!$.isNumeric(icoEndtime)){
+                    alert('Incorrect ICO End time');
                     return;
                 }
-                f = function(receipt){
-                    let pkey = getPrivateKey();
-                    //let account = web3js.eth.accounts.wallet.add(pkey);
-                    contractUtils.setContractVal(pkey,GCToken,"100000",$("#gasprice").val(),false,"0",'setCrowdsaleAccount',$('#deployout'),receipt.contractAddress);
-                    //web3js.eth.accounts.wallet.remove(account.address);
-                };
-                deployContract(getPrivateKey(),GCTCrowdsale,$("#gasprice").val(),[gct], $('#deployout'),f);
-            }
+                deployContract(getPrivateKey(),GCToken,$("#gasprice").val(),[icoEndtime], $('#deployout')); 
+            } 
             
             function deployContract(pkey,contractObj,gasprice,args,display,callSuccess){
                 let gas = contractObj.estimateGas;

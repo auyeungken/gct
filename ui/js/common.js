@@ -117,7 +117,7 @@ const contractUtils = {
         str += "</ol>";
         display.html(str);
     },
-    sendValue: function(functionName, obj, estimateOnly = false,contractObj=GCTCrowdsale){
+    sendValue: function(functionName, obj, estimateOnly = false,contractObj=GCToken){
         let param = [];
         let pObj = $(obj).parents('.operation');
         let arr = pObj.find("input[name='param']").each(function(index,elm){

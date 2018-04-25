@@ -1,0 +1,103 @@
+<html>
+    <head>
+        <script>
+           
+            function createEthAccount(){
+                let acct = web3js.eth.accounts.create(generateRandomStr(32));
+                
+                $("#address").html(acct.address);
+                $("#privatekey").html(acct.privateKey);
+
+                let pass = $("#password").val().trim();
+                $("#password").val("");
+                if(pass !== ''){
+                    let enc = GibberishAES.enc(acct.privateKey, pass);
+                    //console.log(GibberishAES.a2h(GibberishAES.s2a(enc)));
+
+                    let arr = GibberishAES.s2a(enc);
+                    let fixEnc = "";
+                    for(let i=0; i < arr.length; i++){
+                        if(arr[i]!=10){ // remove the new line character
+                            fixEnc += String.fromCharCode(arr[i]);
+                        }
+                    }
+                    $("#encprivatekey").html(fixEnc);
+                    $("#testcmd").html("echo '"+fixEnc+"' | openssl enc -d -aes-256-cbc -a -k [Encrypt Password] -md md5");
+                }
+        
+                let signdata = web3js.eth.accounts.sign('GCT Token', acct.privateKey);
+                $("#signaddress").html(acct.address);
+                $("#sign").html(signdata.signature);
+                $("#signmessage").html(signdata.message);
+            }
+
+            function encrypt(){
+                let pass = $("#password").val().trim();
+                let txt = $('#encrypttext').val().trim();
+
+                if(pass !== '' && txt !==''){
+                    let enc = GibberishAES.enc(txt, pass);
+                    let arr = GibberishAES.s2a(enc);
+                    let fixEnc = "";
+                    for(let i=0; i < arr.length; i++){
+                        if(arr[i]!=10){ // remove the new line character
+                            fixEnc += String.fromCharCode(arr[i]);
+                        }
+                    }
+                    $("#encryptedtext").html(fixEnc);
+                    $("#testcmd").html("echo '"+fixEnc+"' | openssl enc -d -aes-256-cbc -a -k [Encrypt Password] -md md5");
+                }
+            }
+
+            function decrypt(){
+                let pass = $("#password").val().trim();
+                let txt = $('#decrypttext').val().trim();
+
+                if(pass !== '' && txt !==''){
+                    $("#decryptedtext").html(GibberishAES.dec(txt, pass));
+                }
+            }
+        </script>
+    </head>
+    <body>
+        
+        <table border="1">
+            <tr>
+                <td colspan="2"><h1>Encrypt/Decrypt Message</h1></td>
+            </tr>
+            <tr>
+                <td>Password:</td>
+                <td><input type="password" id="password" value="" /></td>
+            </tr>
+            <tr>
+                <td>Encrypt Text:</td>
+                <td><textarea id='encrypttext' rows="10" cols="40"></textarea></td>
+            </tr>
+            <tr>
+                <td>Encrypted:</td>
+                <td><div id='encryptedtext' style='min-height:150px'></div></td>
+            </tr>
+            <tr>
+                <td>Test Command</td>
+                <td><div id='testcmd'></div></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td><input type="button" value="Encrypt" onclick="encrypt()"/></td>
+            </tr>
+            <tr>
+                <td>Decrypt Text:</td>
+                <td><textarea id='decrypttext' rows="10" cols="40"></textarea></td>
+            </tr>
+            <tr>
+                <td>Decrypted:</td>
+                <td><pre id='decryptedtext'  style='min-height:150px'></pre></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td><input type="button" value="Decrypt" onclick="decrypt()"/></td>
+            </tr>
+           
+        </table>
+    </body>
+</html>

@@ -3,7 +3,7 @@
     
     "ownerAccount"        : "0x452ABab9d7C079529f24b5dD0A93c1c858a03d56",
     "walletAddress"       : "0x452ABab9d7C079529f24b5dD0A93c1c858a03d56",
-    "admin"               : "0x80e2afe33144ee746ac4dcEdCF5D788A4692feBB",
+    "crowdsaleAccount"    : "0x80e2afe33144ee746ac4dcEdCF5D788A4692feBB",
     "companyAccount"      : "0x29FB4d844B996ce31E3B12D4348AD168abe4AE1c",
     "privateSaleAccount"  : "0x227F269Db91111D7c7f5e42bc8960C3A0391E217",
     "teamAccount"         : "0x3c3ec1ed78afB52aC1C4BE901D064E2C8AeA3C6f",

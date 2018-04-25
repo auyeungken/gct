@@ -14,18 +14,11 @@
         <script type="text/javascript" src="js/Mash.js"></script>
         <script type="text/javascript" src="js/bignumber.min.js"></script>
         <script type="text/javascript" src="js/common.js?_v=1.0"></script>
-        <script type="text/javascript" src="contract/GCToken.js?_v=1.0.1"></script>
-        <script type="text/javascript" src="contract/GCTCrowdsale.js?_v=1.0.1"></script>
+        <script type="text/javascript" src="contract/GCToken.js?_v=1.0.2"></script>
         <script>
             // Test contract Address@ https://ropsten.etherscan.io/address/0xb14F3EEd4e37521cD7a083a5a46a31CDA8832eAC
-            var gctContractAddr = '0x7EDc30bCA66C2Bb84b4b19739fBaFf6bAd332617';
-            var crowdsaleContractAddr = '0xB2536B8Ff9d5421c2E2a9874a2e8676d59641844';
-
-            // local contract address
-            //var gctContractAddr = '0xe807E80738008a3C00e7136F33e72D26Dcf9d975';
-            //var crowdsaleContractAddr = '0x5dA03cFaB402197ebDcC0C6E15f1fc584802192B';
- 
-             
+            var gctContractAddr = '0xb14F3EEd4e37521cD7a083a5a46a31CDA8832eAC';
+                         
             GibberishAES.size(256);
             var random = KISS07();
             //var web3 = new Web3(Web3.currentProvider);// new Web3("http://192.168.0.136:8545");
@@ -147,9 +140,9 @@
                         <input type="button" onclick="loadPage('createacct.html')" value="Create Account">
                         <input type="button" onclick="loadPage('transfer.html')" value="Transaction">
                         -->
-                        <input type="button" onclick="loadPage('gct.html')" value="GCT">
-                        <input type="button" onclick="loadPage('crowdsale.html')" value="Crowdsale">
-                        <input type="button" onclick="loadPage('deploy.html')" value="Deploy">
+                        <input type="button" onclick="loadPage('gct.html?v=1.0')" value="GCT">
+                        <input type="button" onclick="loadPage('encrypt.html?v=1.0')" value="Encrypt">
+                        <input type="button" onclick="loadPage('deploy.html?v=1.0')" value="Deploy">
                         <div id='accountInfo' style='float:right;padding-right:100px'></div>
                     </div>
                 </td>

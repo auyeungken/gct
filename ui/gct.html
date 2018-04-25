@@ -26,30 +26,19 @@
                     <fieldset>
                         <legend><h3>GCT Operation</h3></legend>
                         <table border="1">
-                            <!--<tr>
-                                <td colspan="2">
-                                    Gas Price in Gwei <input type="text" id="gasprice" value="1" onkeyup="$('#gasWeiAmt').html(convertToWei($(this).val(),'9').toString())"/> (Wei : <span id="gasWeiAmt"></span>)
-                                    <br/>
-                                    <br/>
-                                </td>
-                            </tr>-->
                             <tr>
-                                <td>Set Crowdsale Contract Address<br/>(Only Contract Owner)</td>
+                                <td>Claim Company Reserve<br/>(Only Company Account)</td>
                                 <td>
                                     <div class="operation">
-                                        <table>                                            
-                                            <tr>
-                                                <td class="require">Address</td>
-                                                <td><input type="text" name="param"/></td>
-                                            </tr>
+                                        <table>
                                             <!-- <tr>
                                                 <td>Gas</td>
                                                 <td><input type="text" name="gas" value="1000000"/></td>
                                             </tr>-->  
                                             <tr>
                                                 <td colspan="2">
-                                                    <input type="button" value="Estimate Gas" onclick="contractUtils.sendValue('setCrowdsaleAccount',this,true,GCToken)"/>
-                                                    <input type="button" value="Send" onclick="contractUtils.sendValue('setCrowdsaleAccount',this,false,GCToken)"/>
+                                                    <input type="button" value="Estimate Gas" onclick="contractUtils.sendValue('claimCompanyReserve',this,true)"/>
+                                                    <input type="button" value="Send" onclick="contractUtils.sendValue('claimCompanyReserve',this)"/>
                                                 </td>
                                             </tr>
                                             <tr>
@@ -58,7 +47,58 @@
                                             <tr>
                                                 <td class="result" colspan="2">Result : <span class="result output" name="result"></span></td>
                                             </tr>
-                                        </table>                                        
+                                        </table>                                       
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Claim Team Reserve<br/>(Only Team Account)</td>
+                                <td>
+                                    <div class="operation">
+                                        <table>     
+                                            <!-- <tr>
+                                                <td>Gas</td>
+                                                <td><input type="text" name="gas" value="1000000"/></td>
+                                            </tr>-->        
+                                            <tr>
+                                                <td colspan="2">
+                                                    <input type="button" value="Estimate Gas" onclick="contractUtils.sendValue('claimTeamToken',this,true)"/>
+                                                    <input type="button" value="Send" onclick="contractUtils.sendValue('claimTeamToken',this)"/>
+                                                </td>
+                                            </tr>  
+                                            <tr>
+                                                <td colspan="2"><hr/></td>
+                                            </tr>                            
+                                            <tr>
+                                                <td class="result" colspan="2">Result : <span class="result output" name="result"></span></td>
+                                            </tr>
+                                        </table>
+                                        
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Set ICO Endtime<br/>(Only Contract Owner)</td>
+                                <td>
+                                    <div class="operation">
+                                        <table> 
+                                            <tr>
+                                                <td class="require">Timestamp</td>
+                                                <td><input type="text" name="param"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="2">
+                                                    <input type="button" value="Estimate Gas" onclick="contractUtils.sendValue('setIcoEndTime',this,true)"/>
+                                                    <input type="button" value="Send" onclick="contractUtils.sendValue('setIcoEndTime',this)"/>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="2"><hr/></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="result" colspan="2">Result : <span class="result output" name="result"></span></td>
+                                            </tr>
+                                        </table>
                                     </div>
                                 </td>
                             </tr>
@@ -117,11 +157,35 @@
                                 <td><span id='txtdecimals'></span></td>
                             </tr>
                             <tr>
-                                <td>Cap</td>
-                                <td><span id='txtcap'></span></td>
+                                <td>Cap(GCT)</td>
+                                <td><span id='txtCAPPED_SUPPLY'></span></td>
                             </tr>
                             <tr>
-                                <td>Minted Token</td>
+                                <td>Wallet Address</td>
+                                <td><span id='txtWALLET'></span></td>
+                            </tr>
+                            <tr>
+                                <td>Crowdsale Address</td>
+                                <td><span id='txtCROWDSALE_ACCOUNT'></span></td>
+                            </tr>
+                            <tr>
+                                <td>Company Address</td>
+                                <td><span id='txtCOMPANY_ACCOUNT'></span></td>
+                            </tr>
+                            <tr>
+                                <td>Private Sale Address</td>
+                                <td><span id='txtPRIVATE_SALE_ACCOUNT'></span></td>
+                            </tr>
+                            <tr>
+                                <td>Team Address</td>
+                                <td><span id='txtTEAM_ACCOUNT'></span></td>
+                            </tr>
+                            <tr>
+                                <td>Promotion Address</td>
+                                <td><span id='txtPROMOTION_ACCOUNT'></span></td>
+                            </tr>
+                            <tr>
+                                <td>Minted Token(GCT)</td>
                                 <td><span id='txttotalSupply'></span></td>
                             </tr>
                             <tr>
@@ -129,33 +193,34 @@
                                 <td><span id='txticoEndTime'></span></td>
                             </tr>
                             <tr>
+                                <td>Company Reserve(GCT)</td>
+                                <td><span id='txtCOMPANY_RESERVE'></span></td>
+                            </tr>
+                            <tr>
+                                <td>Company Reserve For</td>
+                                <td><span id='txtCOMPANY_RESERVE_FOR'></span> Seconds</td>
+                            </tr>
+                            <tr>
+                                <td>Company Claimed Reserve</td>
+                                <td><span id='txtcompanyClaimed'></span></td>
+                            </tr>
+                            <tr>
+                                <td>Team Start Claim After</td>
+                                <td><span id='txtTEAM_CAN_CLAIM_AFTER'></span> Seconds</td>
+                            </tr>
+                            <tr>
+                                <td>Team Claim Stage Every</td>
+                                <td><span id='txtCLAIM_STAGE'></span> Seconds</td>
+                            </tr>
+                            <tr>
+                                <td valign="top">Team Stage Reserve(GCT)</td>
+                                <td><span id='txtteamReserve'></span></td>
+                            </tr>
+                            <tr>
                                 <td>Token Balance<br/>&nbsp;</td>
                                 <td><input type='text' id='tokenbalance'><input type='button' value='Get' onclick="contractUtils.getVal(getPrivateKey(), GCToken,'balanceOf',$('#txtbalanceOf'),$('#tokenbalance').val(),'1e+8')"/><br/>GCT <span id='txtbalanceOf'></span></td>
                             </tr>
-                            <tr>
-                                <td>crowdsaleAccount</td>
-                                <td><span id='txtcrowdsaleAccount'></span></td>
-                            </tr>                            
-                            <tr>
-                                <td>hasInit</td>
-                                <td><span id='txthasInit'></span></td>
-                            </tr>
-                            <tr>
-                                <td>Private Sale Account</td>
-                                <td><span id='txtprivateSaleAccount'></span></td>
-                            </tr>
-                            <tr>
-                                <td>Private Invest Lock Tokens</td>
-                                <td><span id='txtprivateInvestLockToken'></span></td>
-                            </tr>
-                            <tr>
-                                <td>Private Sale Release Time</td>
-                                <td><span id='txtprivateSaleReleaseTime'></span></td>
-                            </tr>
-                            <tr>
-                                <td>Private Sale Invested<br/>(only Owner or PrivateSale Account)</td>
-                                <td><input type='text' id='privatesaleinvested'><input type='button' value='Get' onclick="contractUtils.getVal(getPrivateKey(), GCToken,'getPrivateSaleInvested', $('#txtgetPrivateSaleInvested'),$('#privatesaleinvested').val(),'1e+8')"/><br/>GCT <span id='txtgetPrivateSaleInvested'></span></td>
-                            </tr>
+                            
                         </table>
                     </fieldset>
                 </td>
@@ -166,13 +231,19 @@
             $('#txtgctaddress').val(gctContractAddr);
 
             function loadContract (){
-                let arr = ['owner', 'name','symbol','decimals','icoEndTime','crowdsaleAccount','hasInit','privateSaleAccount','privateSaleReleaseTime'];
-                
-                let gctTokenArr = [
-                    'totalSupply','cap','privateInvestLockToken',
+                let arr = [
+                    'owner', 'name','symbol','decimals', 'WALLET','CROWDSALE_ACCOUNT','COMPANY_ACCOUNT','PRIVATE_SALE_ACCOUNT','TEAM_ACCOUNT','PROMOTION_ACCOUNT',
+                    'COMPANY_RESERVE_FOR','companyClaimed','icoEndTime','TEAM_CAN_CLAIM_AFTER','CLAIM_STAGE'
                 ];
+
+                let gctTokenArr = [
+                    'CAPPED_SUPPLY','TEAM_RESERVE','COMPANY_RESERVE','PRIVATE_SALE','PROMOTION_PROGRAM','CROWDSALE_SUPPLY','totalSupply',
+                ];
+  
+                
                 loadValues(arr);
-                loadValues(gctTokenArr, '1e+8');
+                loadValues(gctTokenArr, '1e+8'); 
+                loadArrVales('teamReserve',21 , '1e+8');
             }
 
             function loadValues(arr, decimals){                
@@ -181,12 +252,19 @@
                 });
             }
 
+            async function loadArrVales(functionName, numElm, decimals){
+                contractUtils.getArrayVal(getPrivateKey(), GCToken, functionName, $('#txt'+functionName),numElm,decimals);
+            }
+
             function pstransfer(obj,isEstimate){
                 let o = $('#pstokenamt');
                 let ex = new BigNumber(o.val()).times(new BigNumber('1e08'));
+                let addr = $(obj).parents('.operation').find('input[name="param"]').first().val();
+                
                 o.parent().find('input[name="param"]').val(ex.toString());
-                console.log("Token Amt:", ex.toString());
-                contractUtils.sendValue('privateSaleTransfer',obj,isEstimate,GCToken)
+                if(confirm('Confirm transfer GCT ' + o.val() + '('+ex.toString()+') to ' + addr)){
+                    contractUtils.sendValue('privateSaleTransfer',obj,isEstimate,GCToken)
+                }
             }
         </script>
     </body>
