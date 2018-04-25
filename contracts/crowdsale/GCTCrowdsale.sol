@@ -87,7 +87,7 @@ contract GCTCrowdsale is AccountAddress, Pausable, Whitelist {
     uint public minPurchaseWei; 
     
     // when exceed this amount of token if account conducted in private sale, additional transfer restriction applies
-    uint constant public PRIVATE_INVEST_LOCK_TOKEN = 20000000e8;
+    uint constant public PRIVATE_INVEST_LOCK_TOKEN = 100000 * GCT_PER_USD; // 100k USD
 
     //Total wei sum an address has invested
     mapping(address => uint) public investedSum;
