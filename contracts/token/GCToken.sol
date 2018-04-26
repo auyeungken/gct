@@ -12,7 +12,6 @@ contract GCToken is StandardToken, HasNoEther {
     
     event Mint(address indexed to, uint256 amount);
     event Claim(address indexed from, uint256 amount);
-    event IcoTransfer(address indexed from, address indexed to, uint256 amount);
     
     // Address where funds are collected
     address constant public WALLET = 0x452ABab9d7C079529f24b5dD0A93c1c858a03d56;
@@ -35,33 +34,26 @@ contract GCToken is StandardToken, HasNoEther {
     bool public companyClaimed;
 
     // company reseved release minutes
-    uint constant public COMPANY_RESERVE_FOR = 182 days; // this equivalent to 6 months
+    uint   public COMPANY_RESERVE_FOR = 182 days; // this equivalent to 6 months
     
     // team can start claiming tokens N days after ICO
-    uint constant public TEAM_CAN_CLAIM_AFTER = 120 days;// this equivalent to 4 months
+    uint   public TEAM_CAN_CLAIM_AFTER = 120 days;// this equivalent to 4 months
 
     // period between each claim from team
-    uint constant public CLAIM_STAGE = 30 days;
+    uint   public CLAIM_STAGE = 30 days;
 
     // the amount of token each stage team can claim
     uint[] public teamReserve = [8658000e8, 17316000e8, 25974000e8, 34632000e8, 43290000e8, 51948000e8, 60606000e8, 69264000e8, 77922000e8, 86580000e8, 95238000e8, 103896000e8, 112554000e8, 121212000e8, 129870000e8, 138528000e8, 147186000e8, 155844000e8, 164502000e8, 173160000e8, 181820000e8];
         
     // Store the ico finish time 
-    uint public icoEndTime;
-
-    modifier allowTransfer () {
-        // this will lock crowdsale/private sale account from transfer before ICO ends
-        require (now >= icoEndTime); 
-        _;
-    }
+    uint public icoEndTime = 1537487999; // 20-Sep-2018
 
     modifier canMint() {
         require(totalSupply_ < CAPPED_SUPPLY);
         _;
     }
 
-    function GCToken(uint _icoEndTime) public {
-        setIcoEndTime(_icoEndTime);
+    function GCToken() public {
         mint(PRIVATE_SALE_ACCOUNT, PRIVATE_SALE);
         mint(PROMOTION_ACCOUNT, PROMOTION_PROGRAM);
         mint(CROWDSALE_ACCOUNT, CROWDSALE_SUPPLY);
@@ -124,50 +116,23 @@ contract GCToken is StandardToken, HasNoEther {
         icoEndTime = _icoEndTime;
     }
 
-    /**
-     * @dev Transfer token from crowdsale account to target account
-     * @param _to The address that will receive the gct tokens.
-     * @param _amount The amount of tokens to transfer.
-     * @return A boolean that indicates if the operation was successful.
-     */
-    function crowdsaleTransfer(address _to, uint _amount) external returns (bool){
-        require(msg.sender == CROWDSALE_ACCOUNT);
-        return icoTransfer(CROWDSALE_ACCOUNT, _to, _amount);
+     // ********************************** need to remove after testing **************************   
+    event TestCompanyReserve(uint _v);
+    event TestTeam(uint _v1, uint _v2);
+    
+    function testSetIcoEndTime(uint _v)public{
+        icoEndTime = _v;
     }
 
-    /**
-     * @dev Transfer token from private sale account to target account
-     * @param _to The address that will receive the gct tokens.
-     * @param _amount The amount of tokens to transfer.
-     * @return A boolean that indicates if the operation was successful.
-     */
-    function privateSaleTransfer(address _to, uint _amount) external returns (bool){
-        require (msg.sender == PRIVATE_SALE_ACCOUNT);
-        return icoTransfer(PRIVATE_SALE_ACCOUNT, _to, _amount);
+    function testTeamCanClaim(uint _claimAfter, uint _claimStage) public {
+        TEAM_CAN_CLAIM_AFTER = _claimAfter * 1 seconds;
+        CLAIM_STAGE = _claimStage * 1 seconds;
+        emit TestTeam(TEAM_CAN_CLAIM_AFTER,CLAIM_STAGE);
     }
 
-    /**
-     * @dev The actual transfer function that will used for transfer token from either crowdsale or private sale account
-     * @param _from The address that will send the gct tokens.
-     * @param _to The address that will receive the gct tokens.
-     * @param _amount The amount of tokens to transfer.
-     * @return A boolean that indicates if the operation was successful.
-     */
-    function icoTransfer(address _from, address _to, uint _amount) internal returns (bool){        
-        require(balances[_from] >= _amount);    
-        
-        balances[_from] = balances[_from].sub(_amount);
-        balances[_to] = balances[_to].add(_amount);
-
-        emit IcoTransfer(_from, _to, _amount);
-        return true;
+    function testCompanyReserve(uint _v) public {
+        COMPANY_RESERVE_FOR = _v * 1 seconds;
+        emit TestCompanyReserve(COMPANY_RESERVE_FOR);
     }
-
-    function transfer(address _to, uint256 _value) public allowTransfer returns (bool) {
-        return super.transfer(_to, _value); 
-    }
-
-    function transferFrom(address _from, address _to, uint256 _value) public allowTransfer returns (bool) {
-        return super.transferFrom(_from,_to,_value);
-    }
+    // *******************************************************************************************
 }

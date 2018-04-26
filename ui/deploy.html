@@ -29,7 +29,6 @@
             <tr>
                 <td>
                     <input type="button" value="Deploy GCT" onclick="deploygct()"/>
-                    ICO Endtime : <input type="text" id='txtIcoEndtime' value=""/>
                 </td>
                 <td><span id='gctaddress'></span></td>
             </tr>           
@@ -45,12 +44,7 @@
             // $('#keysection').load('component/key.html');
 
             function deploygct(){
-                let icoEndtime = $('#txtIcoEndtime').val().trim();
-                if(!$.isNumeric(icoEndtime)){
-                    alert('Incorrect ICO End time');
-                    return;
-                }
-                deployContract(getPrivateKey(),GCToken,$("#gasprice").val(),[icoEndtime], $('#deployout')); 
+                deployContract(getPrivateKey(),GCToken,$("#gasprice").val(),[], $('#deployout')); 
             } 
             
             function deployContract(pkey,contractObj,gasprice,args,display,callSuccess){

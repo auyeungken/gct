@@ -12,7 +12,7 @@ function printout(r){
 }
 
 module.exports = function(deployer, network, accounts) {
-    deployer.deploy(GCToken,icoEndTime,{from:config.ownerAccount}).then(function(){
+    deployer.deploy(GCToken,{from:config.ownerAccount}).then(function(){
         //return GCToken.deployed().then(function(gctInstance){
             console.log("GCT Address : ",GCToken.address);
         //});

@@ -103,10 +103,14 @@
                                 </td>
                             </tr>
                             <tr>
-                                <td>Private Sale Transfer<br/>(Only Private Sale Account)</td>
+                                <td>Transfer<br/>(Only Private Sale Account)</td>
                                 <td>
                                     <div class="operation">
                                         <table>
+                                            <tr>
+                                                <td class="require">GCT Balance</td>
+                                                <td><input type='button' value='Get' onclick=" $('#tokenbalance0').html(selectedAcct);contractUtils.getVal(getPrivateKey(), GCToken,'balanceOf',$('#transbalanceOf'),selectedAcct,'1e+8');"/>&nbsp;<span type='text' id='tokenbalance0'/><br/>GCT <span id='transbalanceOf'></span></td>
+                                            </tr>
                                             <tr>
                                                 <td class="require">To Address</td>
                                                 <td><input type="text" name="param"/></td>
@@ -229,7 +233,8 @@
         <script>
             //$('#keysection').load('component/key.html');
             $('#txtgctaddress').val(gctContractAddr);
-
+           
+            
             function loadContract (){
                 let arr = [
                     'owner', 'name','symbol','decimals', 'WALLET','CROWDSALE_ACCOUNT','COMPANY_ACCOUNT','PRIVATE_SALE_ACCOUNT','TEAM_ACCOUNT','PROMOTION_ACCOUNT',
@@ -263,7 +268,7 @@
                 
                 o.parent().find('input[name="param"]').val(ex.toString());
                 if(confirm('Confirm transfer GCT ' + o.val() + '('+ex.toString()+') to ' + addr)){
-                    contractUtils.sendValue('privateSaleTransfer',obj,isEstimate,GCToken)
+                    contractUtils.sendValue('transfer',obj,isEstimate,GCToken)
                 }
             }
         </script>

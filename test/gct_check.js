@@ -96,32 +96,18 @@ contract('GCT Check', function(accounts) {
         });            
     }); 
 
-    it("should not able to call crowdsale transfer",async function(){ 
-        await gct.crowdsaleTransfer(config.testAccount1, 1,{from : config.ownerAccount}).then(function (r){
-            assert.isTrue(false, "Should not able to call by owner");
-        }).catch(function(e){
-            assert.isTrue(isVMErr(e.message), e.message);
-        });            
-    });
+     
 
-    it("should not able to call privatesale transfer",async function(){ 
-        await gct.privateSaleTransfer(config.testAccount1, 1,{from : config.ownerAccount}).then(function (r){
-            assert.isTrue(false, "Should not able to call by owner");
-        }).catch(function(e){
-            assert.isTrue(isVMErr(e.message), e.message);
-        });            
-    });
-
-    it("Cannot transfer over privatesale limit",async function(){ 
-        await gct.privateSaleTransfer(config.testAccount1, "90000000000000001",{from : config.privateSaleAccount}).then(function (r){
+    it("Cannot transfer over privatesale balance limit",async function(){ 
+        await gct.transfer(config.testAccount1, "90000000000000001",{from : config.privateSaleAccount}).then(function (r){
             assert.isTrue(false, "Should not able transfer");
         }).catch(function(e){
             assert.isTrue(isVMErr(e.message), e.message);
         });            
     });
 
-    it("Cannot transfer over crowdsale limit",async function(){ 
-        await gct.crowdsaleTransfer(config.testAccount1, "810000000000000001",{from : config.crowdsaleAccount}).then(function (r){
+    it("Cannot transfer over crowdsale balance limit",async function(){ 
+        await gct.transfer(config.testAccount1, "810000000000000001",{from : config.crowdsaleAccount}).then(function (r){
             assert.isTrue(false, "Should not able transfer");
         }).catch(function(e){
             assert.isTrue(isVMErr(e.message), e.message);
@@ -142,7 +128,7 @@ contract('GCT Check', function(accounts) {
             let beforeCrowdsaleToken = await gct.balanceOf(config.crowdsaleAccount);
             let beforeTargetToken = await gct.balanceOf(targetAccount);
  
-            await gct.crowdsaleTransfer(targetAccount,tokenAmount, {from:config.crowdsaleAccount});
+            await gct.transfer(targetAccount,tokenAmount, {from:config.crowdsaleAccount});
 
             let afterCrowdsaleToken = await gct.balanceOf(config.crowdsaleAccount);
             let afterTargetToken = await gct.balanceOf(targetAccount);
@@ -168,7 +154,7 @@ contract('GCT Check', function(accounts) {
             let beforeCrowdsaleToken = await gct.balanceOf(config.privateSaleAccount);
             let beforeTargetToken = await gct.balanceOf(targetAccount);
  
-            await gct.privateSaleTransfer(targetAccount,tokenAmount, {from:config.privateSaleAccount});
+            await gct.transfer(targetAccount,tokenAmount, {from:config.privateSaleAccount});
 
             let afterCrowdsaleToken = await gct.balanceOf(config.privateSaleAccount);
             let afterTargetToken = await gct.balanceOf(targetAccount);
