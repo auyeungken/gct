@@ -13,8 +13,6 @@ contract GCToken is StandardToken, HasNoEther {
     event Mint(address indexed to, uint256 amount);
     event Claim(address indexed from, uint256 amount);
     
-    // Address where funds are collected
-    address constant public WALLET               = 0x452ABab9d7C079529f24b5dD0A93c1c858a03d56;
     address constant public CROWDSALE_ACCOUNT    = 0x80e2afe33144ee746ac4dcEdCF5D788A4692feBB;
     address constant public COMPANY_ACCOUNT      = 0x29FB4d844B996ce31E3B12D4348AD168abe4AE1c;
     address constant public PRIVATE_SALE_ACCOUNT = 0x227F269Db91111D7c7f5e42bc8960C3A0391E217;
