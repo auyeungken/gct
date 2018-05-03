@@ -13,11 +13,11 @@ contract GCToken is StandardToken, HasNoEther {
     event Mint(address indexed to, uint256 amount);
     event Claim(address indexed from, uint256 amount);
     
-    address constant public CROWDSALE_ACCOUNT    = 0x80e2afe33144ee746ac4dcEdCF5D788A4692feBB;
-    address constant public COMPANY_ACCOUNT      = 0x29FB4d844B996ce31E3B12D4348AD168abe4AE1c;
-    address constant public PRIVATE_SALE_ACCOUNT = 0x227F269Db91111D7c7f5e42bc8960C3A0391E217;
-    address constant public TEAM_ACCOUNT         = 0x3c3ec1ed78afB52aC1C4BE901D064E2C8AeA3C6f;
-    address constant public PROMOTION_ACCOUNT    = 0xc19340a9F7E883355f150D3d4955c8AEBc5C64f5;
+    address constant public CROWDSALE_ACCOUNT    = 0x52e35C4FfFD6fcf550915C5eCafeE395860DDcD5;
+    address constant public COMPANY_ACCOUNT      = 0x7862a8f56C450866B4859EF391A85c535Df18c87;
+    address constant public PRIVATE_SALE_ACCOUNT = 0x66FA34A9c50873b344a24B662720B632ad8E1517;
+    address constant public TEAM_ACCOUNT         = 0x492C8b81D22Ad46b19419Df3D88Fd77b6850A9E4;
+    address constant public PROMOTION_ACCOUNT    = 0x067724fb3439B5c52267d1ddDb3047C037290756;
 
     // -------------------------------------------------- TOKENS  -----------------------------------------------------------------------------------------------------------------
     uint constant public CAPPED_SUPPLY       = 20000000000e8; // maximum of GCT token

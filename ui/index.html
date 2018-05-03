@@ -14,10 +14,10 @@
         <script type="text/javascript" src="js/Mash.js"></script>
         <script type="text/javascript" src="js/bignumber.min.js"></script>
         <script type="text/javascript" src="js/common.js?_v=1.0"></script>
-        <script type="text/javascript" src="contract/GCToken.js?_v=1.0.2"></script>
+        <script type="text/javascript" src="contract/GCToken.js?_v=1.0.5"></script>
         <script>
             // Test contract Address@ https://ropsten.etherscan.io/address/0xb14F3EEd4e37521cD7a083a5a46a31CDA8832eAC
-            var gctContractAddr = '0xb14F3EEd4e37521cD7a083a5a46a31CDA8832eAC';
+            var gctContractAddr = '0x73dEE40bB51F4F3d9c0708dc54cD036BE36097c9';
                          
             GibberishAES.size(256);
             var random = KISS07();
@@ -136,13 +136,14 @@
             <tr>
                 <td>
                     <div style='width:100%;position: fixed;top:0;background-color:aaa'>                    
-                        <!--
+                       
                         <input type="button" onclick="loadPage('createacct.html')" value="Create Account">
+                        <!--
                         <input type="button" onclick="loadPage('transfer.html')" value="Transaction">
                         -->
-                        <input type="button" onclick="loadPage('gct.html?v=1.0.3')" value="GCT">
-                        <input type="button" onclick="loadPage('encrypt.html?v=1.0.1')" value="Encrypt">
-                        <input type="button" onclick="loadPage('deploy.html?v=1.0.1')" value="Deploy">
+                        <input type="button" onclick="loadPage('gct.html?v=1.0.4')" value="GCT">
+                        <input type="button" onclick="loadPage('encrypt.html?v=1.0.2')" value="Encrypt">
+                        <input type="button" onclick="loadPage('deploy.html?v=1.0.2')" value="Deploy">
                         <div id='accountInfo' style='float:right;padding-right:100px'></div>
                     </div>
                 </td>
