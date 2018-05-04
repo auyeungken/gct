@@ -44,7 +44,7 @@ contract GCToken is StandardToken, HasNoEther {
     uint[] public teamReserve = [8658000e8, 17316000e8, 25974000e8, 34632000e8, 43290000e8, 51948000e8, 60606000e8, 69264000e8, 77922000e8, 86580000e8, 95238000e8, 103896000e8, 112554000e8, 121212000e8, 129870000e8, 138528000e8, 147186000e8, 155844000e8, 164502000e8, 173160000e8, 181820000e8];
         
     // Store the ico finish time 
-    uint public icoEndTime = 1537487999; // initial ico end date 20-Sep-2018(Subject to change)
+    uint public icoEndTime = 1540339199; // initial ico end date 23-Oct-2018(Subject to change)
 
     modifier canMint() {
         require(totalSupply_ < CAPPED_SUPPLY);
