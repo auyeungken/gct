@@ -21,10 +21,10 @@ contract GCToken is StandardToken, HasNoEther {
 
     // -------------------------------------------------- TOKENS  -----------------------------------------------------------------------------------------------------------------
     uint constant public CAPPED_SUPPLY       = 20000000000e8; // maximum of GCT token
-    uint constant public TEAM_RESERVE        = 2000000000e8;  // total tokens team can claim
-    uint constant public COMPANY_RESERVE     = 8000000000e8;  // total tokens company reserve for - lock for 6 months
-    uint constant public PRIVATE_SALE        = 900000000e8;   // total tokens used for private sale - lock for 3 months when over invest Token
-    uint constant public PROMOTION_PROGRAM   = 1000000000e8;  // total tokens used for promotion program -  405,000,000 for referral and  595,000,000 for bounty
+    uint constant public TEAM_RESERVE        = 2000000000e8;  // total tokens team can claim - certain amount of GCT will mint for each claim stage
+    uint constant public COMPANY_RESERVE     = 8000000000e8;  // total tokens company reserve for - lock for 6 months than can mint this amount of GCT
+    uint constant public PRIVATE_SALE        = 900000000e8;   // total tokens for private sale
+    uint constant public PROMOTION_PROGRAM   = 1000000000e8;  // total tokens for promotion program -  405,000,000 for referral and  595,000,000 for bounty
     uint constant public CROWDSALE_SUPPLY    = 8100000000e8;  // total tokens for crowdsale
     // ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
    
@@ -44,7 +44,7 @@ contract GCToken is StandardToken, HasNoEther {
     uint[] public teamReserve = [8658000e8, 17316000e8, 25974000e8, 34632000e8, 43290000e8, 51948000e8, 60606000e8, 69264000e8, 77922000e8, 86580000e8, 95238000e8, 103896000e8, 112554000e8, 121212000e8, 129870000e8, 138528000e8, 147186000e8, 155844000e8, 164502000e8, 173160000e8, 181820000e8];
         
     // Store the ico finish time 
-    uint public icoEndTime = 1537487999; // 20-Sep-2018
+    uint public icoEndTime = 1537487999; // initial ico end date 20-Sep-2018(Subject to change)
 
     modifier canMint() {
         require(totalSupply_ < CAPPED_SUPPLY);
